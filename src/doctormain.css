@@ -1,0 +1,58 @@
+body {
+  background-color: #f0f2f5;
+  font-family: 'Poppins', sans-serif;
+}
+.navbar {
+  background-color: #007bff;
+}
+.navbar-brand {
+  color: #fff !important;
+}
+.dashboard {
+  margin-top: 20px;
+}
+.card {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+.card:hover {
+  transform: scale(1.05);
+}
+.card-title {
+  font-weight: bold;
+}
+.btn-accept {
+  background-color: #28a745;
+  color: #fff;
+}
+.btn-cancel {
+  background-color: #dc3545;
+  color: #fff;
+}
+.btn-reject {
+  background-color: #ffc107;
+  color: #fff;
+}
+.action-buttons {
+  display: flex;
+  justify-content: space-around;
+}
+.appointment-list {
+  max-height: 500px;
+  overflow-y: auto;
+}
+@keyframes fadeInUp {
+  from {
+      opacity: 0;
+      transform: translate3d(0, 100%, 0);
+  }
+  to {
+      opacity: 1;
+      transform: none;
+  }
+}
+.card {
+  animation: fadeInUp 0.5s ease both;
+}

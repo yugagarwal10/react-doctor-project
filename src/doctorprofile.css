@@ -1,0 +1,106 @@
+body {
+  background-color: #f0f2f5;
+  font-family: 'Poppins', sans-serif;
+}
+
+.navbar {
+  background-color: #007bff;
+  margin-top: 40px;
+}
+
+.navbar-brand, .nav-link {
+  color: #fff !important;
+}
+
+.doctor-card {
+  margin-top: 30px;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  animation: fadeIn 1s ease;
+}
+
+.profile-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 20px;
+}
+
+.doctor-info .profile-heading {
+  font-weight: bold;
+}
+
+.doctor-info p {
+  color: #6c757d;
+  font-size: 16px;
+}
+
+.btn-appointment {
+  background-color: #007bff;
+  color: white;
+  border-radius: 50px;
+  padding: 10px 20px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-appointment:hover {
+  background-color: #0056b3;
+}
+
+.appointment-section {
+  margin-top: 40px;
+}
+
+.appointment-buttons .btn {
+  margin: 10px;
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.appointment-buttons .btn:hover {
+  transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: translate3d(0, -20px, 0);
+  }
+  to {
+      opacity: 1;
+      transform: none;
+  }
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+.experience-card {
+  margin-top: 30px;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.experience-card .card-title {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.experience-card ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.experience-card ul li {
+  padding: 5px 0;
+  font-size: 16px;
+}

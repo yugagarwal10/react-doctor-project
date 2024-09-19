@@ -1,0 +1,162 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.container {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  width: 90%;
+  max-width: 1200px;
+  text-align: center;
+  animation: fadeIn 1s ease-in-out;
+}
+.title {
+  font-size: 2.8rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+.user-info {
+  background: #f9f9f9;
+  padding: 30px;
+  border-radius: 15px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.4s ease;
+  overflow: hidden;
+}
+.user-info:hover {
+  transform: scale(1.02);
+}
+.user-avatar {
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  margin-right: 25px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  border: 5px solid white;
+}
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.user-avatar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  animation: avatarPulse 2s infinite;
+}
+.user-details {
+  text-align: left;
+  flex: 1;
+}
+.user-details h2 {
+  font-size: 2rem;
+  color: #333;
+  font-family:Georgia, 'Times New Roman', Times, serif;
+}
+.user-details p {
+  margin-top:6px;
+  font-size: 1.2rem;
+  color: #333;
+  font-family:Georgia, 'Times New Roman', Times, serif;
+}
+.logout-btn {
+  background-color: #d9534f;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+.logout-btn:hover {
+  background-color: #c9302c;
+  transform: scale(1.05);
+}
+.btn-group {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+.btn {
+  background-color: #5cb85c;
+  color: white;
+  padding: 15px 30px;
+  margin: 10px;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+.btn:hover {
+  background-color: #4cae4c;
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+.btn i {
+  margin-right: 8px;
+}
+.btn-appointment::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+.btn-appointment:hover::before {
+  transform: translateX(0);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes avatarPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

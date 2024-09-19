@@ -1,0 +1,96 @@
+.appointment-container {
+    background:#88bbef;
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    animation: fadeIn 2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+ .heading{
+    color: black;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 28px;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+}
+
+.appointment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.appointment-form input,.appointment-form textarea {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: box-shadow 0.3s;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+}
+
+.appointment-form input[type="text"],
+.appointment-form input[type="datetime-local"],
+.appointment-form textarea {
+    width: 100%;
+    background-color: #f4f4f4;
+}
+
+.appointment-form input:focus, 
+.appointment-form textarea:focus {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    outline: none;
+}
+
+.submit-btn {
+    background-color: #4CAF50;
+    color: white;
+    font-size: 18px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+}
+
+.submit-btn:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+.submit-btn:active {
+    background-color: #3e8e41;
+}
+
+.floating-animation {
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+select{
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: box-shadow 0.3s;
+}
