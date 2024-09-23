@@ -1,0 +1,47 @@
+ @keyframes doctormain-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes doctormain-slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.doctormain-fade-in {
+  animation: doctormain-fadeIn 1s ease-in-out;
+}
+.doctormain-slide-up {
+  animation: doctormain-slideUp 0.6s ease-in-out;
+}
+.doctormain-card-hover:hover {
+  transform: translateY(-10px);
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+}
+.doctormain-gradient-bg {
+  background: linear-gradient(45deg, #4f46e5, #3b82f6, #22d3ee);
+  background-size: 400% 400%;
+  animation: doctormain-gradientAnimation 8s ease infinite;
+}
+
+@keyframes doctormain-gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

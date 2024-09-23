@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appointment Notification</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #007BFF;
+    }
+
+    p {
+      line-height: 1.6;
+    }
+
+    .appointment-details {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+
+    .appointment-details p {
+      margin: 0;
+      padding: 5px 0;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+
+    .btn:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Appointment Notification</h2>
+    <p>Dear Dr. <%=doctorName%>,</p>
+    <p>We are pleased to inform you that a new appointment has been scheduled. Below are the details:</p>
+
+    <div class="appointment-details">
+      <p><strong>Patient Name:</strong> <%=patientName%></p>
+      <p><strong>Appointment Date:</strong>  <%=date%></p>
+      <p><strong>Appointment Time:</strong>  <%=time%></p>
+      <p><strong>Reason for Visit:</strong>  <%=reason%></p>
+    </div>
+
+    <p>If you need to reschedule or require further information, please feel free to contact us.</p>
+    
+    <a class="btn">Contact Us</a>
+    <p>Thank you for your attention.</p>
+    <p>Sincerely,</p>
+    <p>xyz clinic</p>
+  </div>
+</body>
+</html>

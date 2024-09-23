@@ -15,3 +15,24 @@
 .hover-glow:hover {
   animation: hoverGlow 0.5s forwards;
 }
+.card-hover:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2);
+}
+
+.card-hover:hover .card-img {
+  transform: scale(1.1);
+}
+
+.card-hover:hover .view-profile-btn {
+  background-color: #1c4f9b;
+  transform: translateY(-5px);
+}
+
+.card-img {
+  transition: transform 0.4s ease;
+}
+
+.view-profile-btn {
+  transition: background-color 0.3s, transform 0.3s ease;
+}

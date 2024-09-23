@@ -21,7 +21,9 @@ app.post("/addUserDetails", userController.addUserDetails)
 app.post("/addAppointment", userController.addAppointment)
 app.get("/doctorDetails", userController.doctorDetails)
 app.get("/getUserDetails", userController.getUserDetails)
-app.get("/appointmentList", userController.appointmentList)
+app.get("/appointmentList", userController.appointmentList);
+app.get("/fullAppointmentList", userController.fullAppointmentList);
+app.delete("/deleAppointment", userController.deleAppointment);
 app.get("/doctorList", userController.doctorList)
 app.post("/DecryptData", userController.DecryptData)
 app.listen(5000, () => {

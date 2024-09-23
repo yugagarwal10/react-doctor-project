@@ -1,97 +1,109 @@
-import { React, useEffect, useState } from 'react'
-import "../doctorprofile.css"
-import { useNavigate,Link } from 'react-router-dom'
-import axios from 'axios'
+import { React, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const Doctorprofile = () => {
+const DoctorProfile = () => {
     const navigate = useNavigate();
-    const redirect = () => {
-        navigate("/Doctormain")
-    }
-    const [info, setinfo] = useState({
+    const [info, setInfo] = useState({
         fullName: "",
         expertise: [],
         email: "",
         qualification: "",
         about: ""
     });
+
     const decryptData = async (mac, value) => {
         try {
             const response = await axios.post("http://localhost:5000/DecryptData", { mac, value });
-            return response            
+            return response;
         } catch (error) {
-            console.error('Error submitting the form', error);
+            console.error('Error during decryption', error);
         }
     };
+
     const token = localStorage.getItem("token");
     useEffect(() => {
-        getdata()
+        if (!token) {
+            navigate("/Login")
+        }
+        else {
+            getData()
+        }
     }, []);
-    const getdata = async () => {
-        const result = await axios.get("http://localhost:5000/doctorDetails", { headers: { token: token } });
-        const decryptdata = await decryptData(result.data.mac, result.data.value)
-        setinfo(decryptdata.data);
-        console.log(info);
+
+    const getData = async () => {
+        const result = await axios.get("http://localhost:5000/doctorDetails", { headers: { token } });
+        const decryptedData = await decryptData(result.data.mac, result.data.value);
+        setInfo(decryptedData.data);
+    };
+    const logout = async (e) => {
+        e.preventDefault();
+        localStorage.removeItem("token");
+        navigate("/Login")
     }
+
     return (
-        <div>
-            <nav className="navbar navbar-expand-lg navbar-light">
-                <p className="navbar-brand">Doctor Profile</p>
-                <div className="collapse navbar-collapse justify-content-end">
-                    <ul className="navbar-nav">
-                        <li className="nav-item">
-                            <p className="nav-link"><i className="fas fa-home"></i> Home</p>
-                        </li>
-                        <li className="nav-item">
-                            <p className="nav-link"><i className="fas fa-sign-out-alt"></i> Logout</p>
-                        </li>
-                    </ul>
+        <div className="bg-gradient-to-br from-indigo-200 to-blue-100 min-h-screen p-8 font-serif">
+            <nav className="bg-white shadow-lg rounded-lg p-4 mb-8">
+                <div className="flex justify-between items-center">
+                    <h1 className="text-2xl font-bold text-gray-800">Doctor Profile</h1>
+                    <div className="flex space-x-6">
+                        <button onClick={logout} className="logout-btn">
+                            <i className="fas fa-sign-out-alt"></i> Log Out
+                        </button>
+                    </div>
                 </div>
             </nav>
-            <div className="container doctor-card">
-                <div className="row">
-                    <div className="col-md-3 text-center">
-                        <img src="https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg" alt="Doctor Image" className="profile-img"></img>
-                    </div>
-                    <div className="col-md-9 doctor-info">
-                        <h2 className='profile-heading'>{info.fullName.toUpperCase()}</h2>
-                        <p>
-                            <strong>Specialty:</strong>
-                            {info?.expertise && Array.isArray(info.expertise)
-                                ? info.expertise.map((item, index) => (
-                                    <span key={index}>
-                                        {item}
-                                        {index < info.expertise.length - 1 && ', '}
-                                    </span>
-                                ))
-                                : 'Cardiologist'}
-                        </p>
-                        <p><strong>Qualification:</strong>{info.qualification}</p>
-                        <p><strong>Contact:</strong> {info.email}</p>
-                    </div>
+
+            <div className="bg-white rounded-lg shadow-xl p-6 flex flex-col md:flex-row mb-8 transform transition-transform hover:scale-105 hover:shadow-2xl duration-300">
+                <div className="md:w-1/3 text-center">
+                    <img
+                        src="https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg"
+                        alt="Doctor"
+                        className="rounded-full w-40 h-40 mx-auto border-4 border-indigo-500 shadow-lg"
+                    />
+                </div>
+                <div className="md:w-2/3 md:pl-6">
+                    <h2 className="text-4xl font-semibold text-gray-800">{info.fullName.toUpperCase()}</h2>
+                    <p className="mt-2 text-gray-600">
+                        <strong className="text-indigo-600">Specialty:</strong> {info.expertise?.length > 0 ? info.expertise.join(', ') : 'Not specified'}
+                    </p>
+                    <p className="mt-2 text-gray-600"><strong className="text-indigo-600">Qualification:</strong> {info.qualification}</p>
+                    <p className="mt-2 text-gray-600"><strong className="text-indigo-600">Contact:</strong> {info.email}</p>
                 </div>
             </div>
 
-            <div className="container appointment-section">
-                <div className="row appointment-buttons text-center">
-                    <div className="col-md-4">
-                        <button className="btn btn-outline-primary btn-lg" onClick={redirect}><i className="fas fa-clock"></i> Pending Appointments</button>
-                    </div>
-                    <div className="col-md-4">
-                        <button className="btn btn-outline-success btn-lg"><i className="fas fa-check"></i> Completed Appointments</button>
-                    </div>
-                    <div className="col-md-4">
-                        <button className="btn btn-outline-info btn-lg"><i className="fas fa-list"></i> All Appointments</button>
-                    </div>
-                </div>
+            <div className="flex justify-center space-x-4 mb-8">
+                <button onClick={() => navigate("/Appointmentpending")}
+                    className="bg-gradient-to-r from-blue-500 to-teal-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-teal-600 transition duration-300 transform hover:scale-105">
+                    <i className="fas fa-clock"></i> Pending Appointments
+                </button>
+                <button onClick={() => navigate("/Appointmentcompleted")}
+                    className="bg-gradient-to-r from-green-500 to-lime-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-green-600 hover:to-lime-600 transition duration-300 transform hover:scale-105">
+                    <i className="fas fa-check"></i> Completed Appointments
+                </button>
+                <button onClick={() => navigate("/Allappointment")}
+                    className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-teal-600 hover:to-cyan-600 transition duration-300 transform hover:scale-105">
+                    <i className="fas fa-list"></i> All Appointments
+                </button>
             </div>
 
-            <div className="container experience-card">
-                <h4 className="card-title">Doctor's Experience</h4>
-                <p>{info.about}</p>
+            <div className="bg-white rounded-lg shadow-xl p-6 transition duration-300 transform hover:scale-105 mb-8">
+                <h4 className="text-xl font-bold mb-2 text-indigo-600">Doctor's Experience</h4>
+                <p className="text-gray-600">{info.about || 'No information available.'}</p>
             </div>
+
+            <style jsx>{`
+                @keyframes fadeIn {
+                    0% { opacity: 0; }
+                    100% { opacity: 1; }
+                }
+                .animate-fadeIn {
+                    animation: fadeIn 0.5s ease-in-out forwards;
+                }
+            `}</style>
         </div>
-    )
-}
+    );
+};
 
-export default Doctorprofile
+export default DoctorProfile;

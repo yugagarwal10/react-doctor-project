@@ -47,7 +47,7 @@ const AppointmentForm = () => {
     }
     return (
         <div>
-            <div className="appointment-container floating-animation">
+            <div className="appointment-container floating-animation font-serif">
                 <h2 className='heading'>Book an Appointment</h2>
                 <form className="appointment-form" onSubmit={handlesubmit}>
                     <select name='doctor' value={info.doctor} onChange={handleInputChange} required>
@@ -66,7 +66,6 @@ const AppointmentForm = () => {
                 </form>
             </div>
         </div>
-        
     )
 }
 

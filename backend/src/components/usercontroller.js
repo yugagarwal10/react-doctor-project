@@ -2,7 +2,8 @@ const bcrypt = require("bcrypt");
 const User = require("./schema/user");
 const Doctor = require("./schema/doctor")
 const commonfun = require("./utils/usercommon")
-const config = require("config")
+const config = require("config");
+const path = require("path")
 const secret = config.get("token");
 const jwt = require("jsonwebtoken");
 const decryptData = require("./utils/decryption");
@@ -10,6 +11,10 @@ const { default: mongoose } = require("mongoose");
 const degree = require("./utils/degree")
 const moment = require("moment");
 const Appointment = require("./schema/appointment")
+const nodemailer = require("nodemailer");
+const ejs = require("ejs")
+const Path = path.resolve(__dirname, "utils/letter.ejs")
+
 const userRegister = async (req, res) => {
     try {
         const type = req.body.type;
@@ -41,7 +46,6 @@ const userRegister = async (req, res) => {
         return commonfun.sendError(req, res, error, 500)
     }
 }
-
 const userLogin = async (req, res) => {
     try {
         const email = req.body.email;
@@ -175,6 +179,9 @@ const addUserDetails = async (req, res) => {
 const getUserDetails = async (req, res) => {
     try {
         const token = req.headers.token;
+        if(!token){
+            return commonfun.sendError(req,res,{message:"enter token"},401)
+        }
         const user = jwt.verify(token, secret);
         const id = user.id;
         const existinguser = await User.findOne({ _id: new mongoose.Types.ObjectId(id) });
@@ -199,13 +206,48 @@ const addAppointment = async (req, res) => {
             return commonfun.sendError(req, res, { message: "invalid token or user not found" }, 401)
         }
         const findDoctor = await Doctor.findOne({ fullName: req.body.doctor });
+        const date = req.body.date;
+        const time = moment(date).format("hh:mm A")
+        const formatDate = moment(date).format("DD-MM-YYYY")
         const newappointment = new Appointment({
             userId: existinguser._id,
             doctorId: findDoctor._id,
-            date: req.body.date,
+            date: formatDate,
+            time: time,
             reason: req.body.reason
         });
         await newappointment.save();
+        // const transport = nodemailer.createTransport({
+        //     host: 'smtp.example.com',
+        //     port: 587,
+        //     secure: false,
+        //     auth: {
+        //         user: "yugagarwal271@gmail.com",
+        //         pass: "rxqs kojb wtdm csmu",
+        //     }
+        // })
+        // const data = {
+        //     doctorName: findDoctor.fullName,
+        //     date: formatDate,
+        //     time: time,
+        //     reason: req.body.reason,
+        //     patientName: existinguser.fullName
+        // }
+        // ejs.renderFile(Path, data, async (error, html) => {
+        //     if (error) {
+        //         console.log(error);
+        //         return commonfun.sendError(req, res, error, 500)
+        //     }
+        //     else {
+        //         const info = await transport.sendMail({
+        //             from: "yugagarwal214@gmail.com",
+        //             to: findDoctor.email,
+        //             subject: "appointment booking",
+        //             html: html
+        //         })
+        //         console.log(info);
+        //     }
+        // })
         return commonfun.sendSuccess(req, res, { message: "appointment scheduled successfully" })
     } catch (error) {
         console.log(error);
@@ -226,35 +268,151 @@ const appointmentList = async (req, res) => {
         const user = jwt.verify(token, secret);
         const id = user.id;
         const existinguser = await User.findOne({ _id: new mongoose.Types.ObjectId(id) });
-        if (!existinguser) {
-            return commonfun.sendError(req, res, { message: "invalid token or user not found" }, 401)
-        }
-        const list = await Appointment.aggregate([
-            {
-                $lookup: {
-                    from: "doctors",
-                    localField: "doctorId",
-                    foreignField: "_id",
-                    as: "doctorinfo",
+        if (existinguser) {
+            const status = Number(req.headers.status);
+            const list = await Appointment.aggregate([
+                {
+                    $match: { status: status, userId: existinguser._id }
                 },
-            },
-            {
-                $addFields: {
-                    doctorName: { $arrayElemAt: ["$doctorinfo.fullName", 0] }
+                {
+                    $lookup: {
+                        from: "doctors",
+                        localField: "doctorId",
+                        foreignField: "_id",
+                        as: "doctorinfo",
+                    },
+                },
+                {
+                    $addFields: {
+                        doctorName: { $arrayElemAt: ["$doctorinfo.fullName", 0] }
+                    }
+                },
+                {
+                    $project: {
+                        doctorinfo: 0
+                    }
                 }
-            },
-            {
-                $project: {
-                    doctorinfo: 0
+            ])
+            return res.json(list);
+        }
+        const existingDoctor = await Doctor.findOne({ _id: new mongoose.Types.ObjectId(id) });
+        if (existingDoctor) {
+            const status = Number(req.headers.status);
+            const list = await Appointment.aggregate([
+                {
+                    $match:
+                        { status: status, doctorId: existingDoctor._id }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "userId",
+                        foreignField: "_id",
+                        as: "userinfo",
+                    },
+                },
+                {
+                    $addFields: {
+                        userName: { $arrayElemAt: ["$userinfo.fullName", 0] }
+                    }
+                },
+                {
+                    $project: {
+                        userinfo: 0
+                    }
                 }
-            }
-        ])
-        return res.json(list);
+            ])
+            return res.json(list);
+        }
+        return commonfun.sendError(req, res, { message: "invalid token or user not found" }, 401)
     } catch (error) {
         return commonfun.sendError(req, res, { message: error.message }, 500)
     }
 }
+const fullAppointmentList = async (req, res) => {
+    try {
+        const token = req.headers.token;
+        const user = jwt.verify(token, secret);
+        const id = user.id;
+        const existinguser = await User.findOne({ _id: new mongoose.Types.ObjectId(id) });
+        if (existinguser) {
+            const list = await Appointment.aggregate([
+                {
+                    $match: { userId: existinguser._id }
+                },
+                {
+                    $lookup: {
+                        from: "doctors",
+                        localField: "doctorId",
+                        foreignField: "_id",
+                        as: "doctorinfo",
+                    },
+                },
+                {
+                    $addFields: {
+                        doctorName: { $arrayElemAt: ["$doctorinfo.fullName", 0] }
+                    }
+                },
+                {
+                    $project: {
+                        doctorinfo: 0
+                    }
+                }
+            ])
+            return res.json(list);
+        }
+        const existingDoctor = await Doctor.findOne({ _id: new mongoose.Types.ObjectId(id) });
+        if (existingDoctor) {
+            const list = await Appointment.aggregate([
+                {
+                    $match:
+                    {
+                        $and: [{ $nor: [{ status: 3 }] }, { doctorId: existingDoctor._id }]
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "userId",
+                        foreignField: "_id",
+                        as: "userinfo",
+                    },
+                },
+                {
+                    $addFields: {
+                        userName: { $arrayElemAt: ["$userinfo.fullName", 0] }
+                    }
+                },
+                {
+                    $project: {
+                        userinfo: 0
+                    }
+                }
+            ])
+            return res.json(list);
+        }
+        return commonfun.sendError(req, res, { message: "invalid token or user not found" }, 401)
+    } catch (error) {
+        return commonfun.sendError(req, res, { message: error.message }, 500)
+    }
+}
+const deleAppointment = async (req, res) => {
+    try {
+        const token = req.headers.token;
+        const user = jwt.verify(token, secret);
+        const id = user.id;
+        const existinguser = await User.findOne({ _id: new mongoose.Types.ObjectId(id) });
+        if (!existinguser) {
+            return commonfun.sendError(req, res, { message: "invalid token or user not found" }, 401)
+        }
+        const appointmentId = req.query.id;
+        await Appointment.updateOne({ _id: new mongoose.Types.ObjectId(appointmentId) }, { $set: { status: 3 } })
+        return commonfun.sendSuccess(req, res, { message: "deleted successfully" })
+    } catch (error) {
+        return commonfun.sendError(req, res, { message: error.message }, 500)
+ }
+}
 module.exports = {
     userRegister, userLogin, DecryptData, addDoctorDetails, uploadImage, doctorDetails, addUserDetails, getUserDetails, addAppointment
-    , doctorList, appointmentList
+    , doctorList, appointmentList, fullAppointmentList, deleAppointment, deleAppointment
 }

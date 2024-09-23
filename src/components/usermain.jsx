@@ -28,13 +28,24 @@ const Usermain = () => {
   };
   const navigate=useNavigate()
   const token = localStorage.getItem("token");
-  useEffect(() => {
-    getdata()
-  }, []);
+  useEffect(()=>{
+    if(!token){
+      navigate("/Login")
+    }
+    else{
+      getdata()
+    }
+  },[]);
   const getdata = async () => {
-    const result = await axios.get("http://localhost:5000/getUserDetails", { headers: { token: token } });
-    const decryptdata = await decryptData(result.data.mac, result.data.value)
-    setinfo(decryptdata.data);
+    try {
+      const result = await axios.get("http://localhost:5000/getUserDetails", { headers: { token: token } });
+      const decryptdata = await decryptData(result.data.mac, result.data.value)
+      setinfo(decryptdata.data); 
+    } catch (error) {
+      if(error.response.status==401){
+        navigate("/Login")
+      }      
+    }
   }
   const appointmentForm=(e)=>{
     e.preventDefault();
@@ -43,6 +54,15 @@ const Usermain = () => {
   const Showappointment=(e)=>{
     e.preventDefault();
     navigate("/Showappointent")
+  }
+  const Showdoctor=(e)=>{
+    e.preventDefault();
+    navigate("/Finddoctor")
+  }
+  const logout=async(e)=>{
+    e.preventDefault();
+    localStorage.removeItem("token");
+    navigate("/Login")
   }
   return (
     <div>
@@ -57,7 +77,7 @@ const Usermain = () => {
             <p>Email:{info.email.toUpperCase()}</p>
             <p>Number:{info.contactNumber}</p>
           </div>
-          <button className="logout-btn">
+          <button onClick={logout}className="logout-btn">
             <i className="fas fa-sign-out-alt"></i> Log Out
           </button>
         </div>
@@ -68,13 +88,10 @@ const Usermain = () => {
           <button className="btn btn-appointment" onClick={Showappointment}>
             <i className="fas fa-list-alt"></i>Showappointment
           </button>
-          <button className="btn btn-appointment">
-            <i className="fas fa-heartbeat"></i> Health Summary
-          </button>
-          <button className="btn btn-appointment">
+          <button className="btn btn-appointment" onClick={Showdoctor}>
             <i className="fas fa-user-md"></i> Find a Doctor
           </button>
-          <button className="btn btn-appointment">
+          <button className="btn btn-appointment" onClick={()=>navigate("/Medicalrecords")}>
             <i className="fas fa-file-medical-alt"></i> Medical Records
           </button>
         </div>
