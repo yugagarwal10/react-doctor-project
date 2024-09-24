@@ -9,7 +9,8 @@ const DoctorProfile = () => {
         expertise: [],
         email: "",
         qualification: "",
-        about: ""
+        about: "",
+        image:"",
     });
 
     const decryptData = async (mac, value) => {
@@ -41,7 +42,6 @@ const DoctorProfile = () => {
         localStorage.removeItem("token");
         navigate("/Login")
     }
-
     return (
         <div className="bg-gradient-to-br from-indigo-200 to-blue-100 min-h-screen p-8 font-serif">
             <nav className="bg-white shadow-lg rounded-lg p-4 mb-8">
@@ -85,6 +85,10 @@ const DoctorProfile = () => {
                 <button onClick={() => navigate("/Allappointment")}
                     className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-teal-600 hover:to-cyan-600 transition duration-300 transform hover:scale-105">
                     <i className="fas fa-list"></i> All Appointments
+                </button>
+                <button onClick={() => navigate("/Doctorprofileupdate")}
+                    className="bg-gradient-to-r from-green-500 to-lime-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-green-600 hover:to-lime-600 transition duration-300 transform hover:scale-105">
+                     <i className="fas fa-list"></i> Update Profile
                 </button>
             </div>
 

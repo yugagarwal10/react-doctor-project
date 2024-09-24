@@ -13,6 +13,8 @@ import Finddoctor from './components/finddoctor'
 import Medicalrecords from './components/medicalrecords'
 import Appointmentcompleted from './components/appointmentcompleted'
 import Appointmentpending from './components/appointmentpending'
+import Userprofileupdate from './components/userprofileupdate'
+import Doctorprofileupdate from './components/doctorprofileupdate'
 const App = () => {
   return (
     <>
@@ -22,7 +24,9 @@ const App = () => {
         <Route path="/Allappointment" element={<Allappointment />} />
         <Route path="/Doctorprofile" element={<Doctorprofile />} />
         <Route path="/Appointmentcompleted" element={<Appointmentcompleted />} />
+        <Route path="/Userprofileupdate" element={<Userprofileupdate />} />
         <Route path="/Appointmentpending" element={<Appointmentpending />} />
+        <Route path="/Doctorprofileupdate" element={<Doctorprofileupdate />} />
         <Route path="/Userverify" element={<Userverify />} />
         <Route path="/AppointmentForm" element={<AppointmentForm />} />
         <Route path="/Medicalrecords" element={<Medicalrecords />} />

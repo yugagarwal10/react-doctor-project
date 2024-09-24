@@ -33,7 +33,6 @@ const Doctor = () => {
       navigate("/Login")
     }
   }, []);
-
   const handlesubmit = async (event) => {
     try {
       const token = localStorage.getItem("token");
@@ -43,8 +42,8 @@ const Doctor = () => {
       formData.append("startShiftTime", info.startShiftTime);
       formData.append("endShiftTime", info.endShiftTime);
       formData.append("qualification", info.qualification);
-      formData.append("about", info.about);
-      const response = await axios.post("http://localhost:5000/addDoctorDetails",formData ,{
+      formData.append("about", info.about);   
+      const response = await axios.post("http://localhost:5000/addDoctorDetails", formData ,{
         headers: { token: token },
         'Content-Type': 'multipart/form-data',
       })

@@ -39,7 +39,7 @@ const Medicalrecords = () => {
           <h3 className="text-2xl font-semibold mb-4 text-yellow-600">Pending Appointments</h3>
           <div className="space-y-6">
             {categorizeAppointments(0).map((user) => (
-              <div key={user.id} className="bg-yellow-50 rounded-lg shadow-lg p-6 border-l-4 border-yellow-500 transition-transform hover:scale-105 duration-300 animate-bounce">
+              <div key={user.id} className="bg-yellow-50 rounded-lg shadow-lg p-6 mt-5 border-l-4 border-yellow-500 transition-transform hover:scale-105 duration-300 animate-bounce">
                 <div className="flex items-center mb-4">
                   <FontAwesomeIcon icon={faHourglassHalf} className="text-yellow-500 text-3xl mr-3" />
                   <h5 className="text-2xl font-bold text-gray-800">{user.userName}</h5>

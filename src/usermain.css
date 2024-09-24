@@ -1,5 +1,4 @@
 body {
-  font-family: 'Poppins', sans-serif;
   background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
   min-height: 100vh;
   display: flex;
@@ -52,8 +51,6 @@ body {
 .user-avatar img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
 }
 .user-avatar::before {
   content: '';

@@ -112,7 +112,6 @@ const DecryptData = async (req, res) => {
         return commonfun.sendError(req, res, { message: error.message }, 500);
     }
 };
-
 const addDoctorDetails = async (req, res) => {
     try {
         const token = req.headers.token;
@@ -122,19 +121,17 @@ const addDoctorDetails = async (req, res) => {
         if (!existingDoctor) {
             return commonfun.sendError(req, res, { message: "invalid token or user not found" }, 401)
         }
-        const startShiftTime = req.body.startShiftTime;
-        const endShiftTime = req.body.endShiftTime;
-        const formatedStart = moment(startShiftTime, "HH:mm").format("hh:mm A");
-        const formatedLast = moment(endShiftTime, "HH:mm").format("hh:mm A");
-        if (startShiftTime > endShiftTime) {
-            return commonfun.sendError(req, res, { message: "end time should be greater" }, 422)
-        }
         degree.Upload(req, res, async (err) => {
             if (err) {
                 return commonfun.sendError(req, res, { message: err.message }, 400)
             } else {
-                console.log(req.file);
-
+                const startShiftTime = req.body.startShiftTime;
+                const endShiftTime = req.body.endShiftTime;
+                const formatedStart = moment(startShiftTime, "HH:mm").format("hh:mm A");
+                const formatedLast = moment(endShiftTime, "HH:mm").format("hh:mm A");
+                if (startShiftTime > endShiftTime) {
+                    return commonfun.sendError(req, res, { message: "end time should be greater" }, 422);
+                }
                 await Doctor.updateOne({ _id: new mongoose.Types.ObjectId(id) }, { $set: { image: req.file.filename, expertise: req.body.expertise, startShiftTime: formatedStart, endShiftTime: formatedLast, status: 1, qualification: req.body.qualification, about: req.body.about } });
             }
         });
@@ -180,7 +177,6 @@ const addUserDetails = async (req, res) => {
         return commonfun.sendError(req, res, error, 500)
     }
 }
-
 const getUserDetails = async (req, res) => {
     try {
         const token = req.headers.token;
@@ -218,7 +214,7 @@ const addAppointment = async (req, res) => {
         const properTime = moment(time, "hh:mm A").format("HH:mm")
         const formatDate = moment(date).format("DD-MM-YYYY");
         const todayDate = Date.now();
-        const formatedtodayDate = moment(todayDate).format("DD-MM-YYYY");
+        const formatedtodayDate = moment(todayDate).add(1,"days").format("DD-MM-YYYY");
         const alreadyAppointmented = await Appointment.findOne({ doctorId: findDoctor._id, status: 0, time: time })
         if (alreadyAppointmented) {
             return commonfun.sendError(req, res, { message: "doctor's appointment already booked" }, 400)
@@ -446,11 +442,7 @@ const confirmAppointment = async (req, res) => {
             return commonfun.sendError(req, res, { message: "invalid token or user not found" }, 401)
         }
         const response = req.body.response;
-        console.log(response);
-
         const appointmentId = req.body.appointmentId;
-        console.log(appointmentId);
-
         if (response == "Accept") {
             await Appointment.updateOne({ _id: new mongoose.Types.ObjectId(appointmentId) }, { $set: { status: 1 } })
             return commonfun.sendSuccess(req, res, { message: "accepted successfully" })
@@ -464,7 +456,48 @@ const confirmAppointment = async (req, res) => {
         return commonfun.sendError(req, res, { message: error.message }, 500)
     }
 }
+
+const updateUserProfile = async (req, res) => {
+    try {
+        const token = req.headers.token;
+        const user = jwt.verify(token, secret);
+        const id = user.id;
+        const existingUser = await User.findOne({ _id: new mongoose.Types.ObjectId(id) });
+        if (!existingUser) {
+            return commonfun.sendError(req, res, { message: "invalid token or user not found" }, 401)
+        }
+        await User.updateOne({ _id: new mongoose.Types.ObjectId(id) }, { $set: { contactNumber: req.body.contactNumber, address: req.body.address, fullName: req.body.fullName, email: req.body.email } });
+        return commonfun.sendSuccess(req, res, { message: "added successfully" })
+    } catch (error) {
+        console.log(error);
+        return commonfun.sendError(req, res, { message: error.message }, 500)
+    }
+}
+const updateDoctorProfile = async (req, res) => {
+    try {
+        const token = req.headers.token;
+        const user = jwt.verify(token, secret);
+        const id = user.id;
+        const existingUser = await Doctor.findOne({ _id: new mongoose.Types.ObjectId(id) });
+        if (!existingUser) {
+            return commonfun.sendError(req, res, { message: "invalid token or user not found" }, 401)
+        }
+        const startShiftTime = req.body.startShiftTime;
+        const endShiftTime = req.body.endShiftTime;
+        const formatedStart = moment(startShiftTime, "HH:mm").format("hh:mm A");
+        const formatedLast = moment(endShiftTime, "HH:mm").format("hh:mm A");
+        if (startShiftTime > endShiftTime) {
+            return commonfun.sendError(req, res, { message: "end time should be greater" }, 422);
+        }
+        await Doctor.updateOne({ _id: new mongoose.Types.ObjectId(id) }, { $set: { about: req.body.about, qualification: req.body.qualification, fullName: req.body.fullName, email: req.body.email, startShiftTime: formatedStart, endShiftTime: formatedLast} });
+        return commonfun.sendSuccess(req, res, { message: "added successfully" })
+    } catch (error) {
+        console.log(error);
+        return commonfun.sendError(req, res, { message: error.message }, 500)
+    }
+}
 module.exports = {
     userRegister, userLogin, DecryptData, addDoctorDetails, doctorDetails, addUserDetails, getUserDetails, addAppointment
-    , doctorList, appointmentList, fullAppointmentList, deleAppointment, deleAppointment, confirmAppointment
+    , doctorList, appointmentList, fullAppointmentList, deleAppointment, deleAppointment, confirmAppointment, updateUserProfile,
+    updateDoctorProfile
 }

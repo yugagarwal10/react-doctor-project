@@ -6,10 +6,6 @@ import { ToastContainer, toast } from 'react-toastify';
 
 const Showappointent = () => {
     const navigate = useNavigate();
-    const appointment = (e) => {
-        e.preventDefault();
-        navigate("/Usermain")
-    }
     const [info, setinfo] = useState([]);
     const token = localStorage.getItem("token");
     const getdata = async (event) => {
@@ -68,9 +64,12 @@ const Showappointent = () => {
                         )}
                     </div>
                     <div class="mt-10 w-full flex justify-center space-x-4 fade-in">
-                        <button class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition duration-300 hover-glow" onClick={appointment}>
-                            Go to Main Page
-                        </button>
+                    <button
+          onClick={() => navigate("/Usermain")}
+          className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 transform hover:scale-105"
+        >
+          Go to Main Profile
+        </button>
                     </div><ToastContainer />
                 </div>
 

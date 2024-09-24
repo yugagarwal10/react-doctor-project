@@ -31,12 +31,12 @@ const Finddoctor = () => {
       <body className="bg-gray-100 font-serif">
         <div className="container mx-auto py-10">
           <div className="flex justify-end mb-6">
-            <button
-              onClick={() => navigate('/Usermain')}
-              className="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-blue-600 transition duration-300"
-            >
-              Go to Main Page
-            </button>
+          <button
+          onClick={() => navigate("/Usermain")}
+          className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 transform hover:scale-105"
+        >
+          Go to Main Profile
+        </button>
           </div>
 
           <h1 className="text-4xl font-bold text-center mb-10">Our Doctors</h1>

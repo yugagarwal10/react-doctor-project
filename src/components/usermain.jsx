@@ -8,16 +8,8 @@ const Usermain = () => {
     fullName: "",
     email: "",
     contactNumber: "",
+    image:"",
   })
-  const hndleinputchange = (event) => {
-    event.preventDefault();
-
-    const { name, value } = event.target;
-    setinfo((info) => ({
-      ...info,
-      [name]: value
-    }));
-  };
   const decryptData = async (mac, value) => {
     try {
       const response = await axios.post("http://localhost:5000/DecryptData", { mac, value });
@@ -47,30 +39,19 @@ const Usermain = () => {
       }      
     }
   }
-  const appointmentForm=(e)=>{
-    e.preventDefault();
-    navigate("/AppointmentForm")
-  }
-  const Showappointment=(e)=>{
-    e.preventDefault();
-    navigate("/Showappointent")
-  }
-  const Showdoctor=(e)=>{
-    e.preventDefault();
-    navigate("/Finddoctor")
-  }
   const logout=async(e)=>{
     e.preventDefault();
     localStorage.removeItem("token");
     navigate("/Login")
   }
+  const url=`http://localhost:5000/uploads/userProfile/${info.image}`
   return (
     <div>
       <div className="container">
         <h1 className="title">Welcome to Your Dashboard</h1>
         <div className="user-info">
           <div className="user-avatar">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYP-KKtRJXm9qK7k2_PA1utxbxWdpzGIdulQ&s" alt="User Image"></img>
+            <img src={url} alt="User Image"></img>
           </div>
           <div className="user-details">
             <h2>Name:{info.fullName.toUpperCase()}</h2>
@@ -82,17 +63,20 @@ const Usermain = () => {
           </button>
         </div>
         <div className="btn-group">
-          <button className="btn btn-appointment" onClick={appointmentForm}>
+          <button className="btn btn-appointment" onClick={()=>navigate("/AppointmentForm")}>
             <i className="fas fa-calendar"></i> Book Appointment
           </button>
-          <button className="btn btn-appointment" onClick={Showappointment}>
+          <button className="btn btn-appointment" onClick={()=>navigate("/Showappointent")}>
             <i className="fas fa-list-alt"></i>Show Appointment
           </button>
-          <button className="btn btn-appointment" onClick={Showdoctor}>
+          <button className="btn btn-appointment" onClick={()=>navigate("/Finddoctor")}>
             <i className="fas fa-user-md"></i> Find A Doctor
           </button>
           <button className="btn btn-appointment" onClick={()=>navigate("/Medicalrecords")}>
             <i className="fas fa-file-medical-alt"></i> Medical Records
+          </button>
+          <button className="btn btn-appointment" onClick={()=>navigate("/Userprofileupdate")}>
+            <i className="fas fa-file-medical-alt"></i> Update Profile
           </button>
         </div>
       </div>

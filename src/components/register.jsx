@@ -16,7 +16,6 @@ const Register = () => {
   });
 
   const handleInputChange = (event) => {
-    event.preventDefault();
     const { name, value } = event.target;
     setinfo((info) => ({
       ...info,
@@ -27,7 +26,6 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handlesubmit = async (e) => {
-    e.preventDefault();
     try {
       const response = await axios.post('http://localhost:5000/userRegister', {
         fullName: info.fullName,
@@ -48,7 +46,6 @@ const Register = () => {
     e.preventDefault();
     navigate('/login');
   };
-
   return (
     <div className="min-h-100vh flex items-center justify-center bg-gradient-to-br from-purple-500 to-blue-600 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 p-10 bg-white shadow-2xl rounded-lg animate-fadeIn">
@@ -79,7 +76,7 @@ const Register = () => {
             <div className="relative">
               <input
                 type="password"
-                {...register("password", { required: "Password is required", minLength: { value: 6, message: "Password must be at least 6 characters" } })}
+                {...register("password", { required: "Password is required", minLength: { value: 5, message: "Password must be at least 6 characters" } })}
                 name="password"
                 onChange={handleInputChange}
                 className="appearance-none rounded-md w-full py-3 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
