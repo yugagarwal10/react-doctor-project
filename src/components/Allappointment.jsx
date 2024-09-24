@@ -7,13 +7,18 @@ import { faUser, faClock, faClipboardList, faCheckCircle, faTimesCircle, faHourg
 const Allappointment = () => {
   const navigate = useNavigate();
   const [info, setInfo] = useState([]);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    getData();
-  }, []);
+    if (!token) {
+        navigate("/Login")
+    }
+    else {
+        getData()
+    }
+}, []);
 
   const getData = async () => {
-    const token = localStorage.getItem("token");
     const result = await axios.get("http://localhost:5000/fullAppointmentList", { headers: { token: token} });
     setInfo(result.data);
   };
@@ -28,14 +33,14 @@ const Allappointment = () => {
         <p className="text-3xl font-bold text-center text-gray-800">Doctor Dashboard</p>
       </nav>
 
-      <h2 className="text-4xl font-semibold text-center mb-6 text-gray-800">Appointments</h2>
+      <h2 className="text-4xl font-semibold text-center text-gray-800">Appointments</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
         <div>
           <h3 className="text-2xl font-semibold mb-4 text-yellow-600">Pending Appointments</h3>
-          <div className="space-y-6">
+          <div className="space-y-6 ">
             {categorizeAppointments(0).map((user) => (
-              <div key={user.id} className="bg-yellow-50 rounded-lg shadow-lg p-6 border-l-4 border-yellow-500 transition-transform hover:scale-105 duration-300 animate-bounce">
+              <div key={user.id} className="mt-10 bg-yellow-50 rounded-lg shadow-lg p-6 border-l-4 border-yellow-500 transition-transform hover:scale-105 duration-300 animate-bounce ">
                 <div className="flex items-center mb-4">
                   <FontAwesomeIcon icon={faHourglassHalf} className="text-yellow-500 text-3xl mr-3" />
                   <h5 className="text-2xl font-bold text-gray-800">{user.userName}</h5>
@@ -95,8 +100,6 @@ const Allappointment = () => {
           </div>
         </div>
       </div>
-
-      {/* Button to navigate to main profile */}
       <div className="flex justify-center mt-8">
         <button
           onClick={() => navigate("/Doctorprofile")}

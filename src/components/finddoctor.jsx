@@ -16,9 +16,15 @@ const Finddoctor = () => {
       toast.error('Failed to fetch doctor data');
     }
   };
+  const token=localStorage.getItem("token");
   useEffect(() => {
-    getdata();
-  }, []);
+    if (!token) {
+        navigate("/Login")
+    }
+    else {
+      getdata()
+    }
+}, []);
 
   return (
     <div>

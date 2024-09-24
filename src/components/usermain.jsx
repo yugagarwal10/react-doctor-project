@@ -86,10 +86,10 @@ const Usermain = () => {
             <i className="fas fa-calendar"></i> Book Appointment
           </button>
           <button className="btn btn-appointment" onClick={Showappointment}>
-            <i className="fas fa-list-alt"></i>Showappointment
+            <i className="fas fa-list-alt"></i>Show Appointment
           </button>
           <button className="btn btn-appointment" onClick={Showdoctor}>
-            <i className="fas fa-user-md"></i> Find a Doctor
+            <i className="fas fa-user-md"></i> Find A Doctor
           </button>
           <button className="btn btn-appointment" onClick={()=>navigate("/Medicalrecords")}>
             <i className="fas fa-file-medical-alt"></i> Medical Records

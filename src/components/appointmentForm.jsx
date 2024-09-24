@@ -1,8 +1,8 @@
 import { React, useEffect, useState } from 'react'
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import "../userform.css"
+import "../userform.css";
 
 const AppointmentForm = () => {
     const [info, setinfo] = useState({
@@ -26,7 +26,12 @@ const AppointmentForm = () => {
         setlist(result.data)
     }
     useEffect(() => {
-        getdata()
+        if (!token) {
+            navigate("/Login")
+        }
+        else {
+            getdata()
+        }
     }, []);
     const handlesubmit = async (e) => {
         e.preventDefault();
@@ -41,8 +46,8 @@ const AppointmentForm = () => {
             toast.success('User register successfully!');
             navigate("/Showappointent");
         } catch (error) {
-            toast.error((Object.values(error.response.data).toString()));
-            console.error('Error uploading the image', Object.values(error.response.data).toString());
+            toast.error(Object.values(error.response.data).toString());
+            console.error(Object.values(error.response.data).toString());
         }
     }
     return (
@@ -51,7 +56,7 @@ const AppointmentForm = () => {
                 <h2 className='heading'>Book an Appointment</h2>
                 <form className="appointment-form" onSubmit={handlesubmit}>
                     <select name='doctor' value={info.doctor} onChange={handleInputChange} required>
-                        <option value="" disabled>Select a doctor</option> 
+                        <option value="" disabled>Select a doctor</option>
                         {list.length > 0 ? (
                             list.map((user) => (
                                 <option key={user._id} value={user.fullName}>{user.fullName}</option>
@@ -64,7 +69,15 @@ const AppointmentForm = () => {
                     <textarea name="reason" placeholder="Reason for Appointment" rows="4" required onChange={handleInputChange}></textarea>
                     <button type="submit" className="submit-btn">Submit</button>
                 </form>
-            </div>
+                <div className="flex justify-center mt-8">
+                    <button
+                        onClick={() => navigate("/Usermain")}
+                        className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 transform hover:scale-105"
+                    >
+                        Go to Main Profile
+                    </button>
+                </div>
+            </div><ToastContainer />
         </div>
     )
 }

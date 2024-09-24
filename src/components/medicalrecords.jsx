@@ -7,12 +7,17 @@ import { faUser, faClock, faClipboardList, faCheckCircle, faTimesCircle, faHourg
 const Medicalrecords = () => {
   const navigate = useNavigate();
   const [info, setInfo] = useState([]);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    getData();
+    if (!token) {
+      navigate("/Login")
+    }
+    else {
+      getData()
+    }
   }, []);
   const getData = async () => {
-    const token = localStorage.getItem("token");
     const result = await axios.get("http://localhost:5000/fullAppointmentList", { headers: { token: token } });
     setInfo(result.data);
   };
@@ -24,7 +29,7 @@ const Medicalrecords = () => {
   return (
     <div className="bg-gradient-to-br from-blue-50 to-purple-100 min-h-screen p-6 font-serif">
       <nav className="bg-white shadow-lg rounded-lg p-4 mb-8">
-        <p className="text-3xl font-bold text-center text-gray-800">Doctor Dashboard</p>
+        <p className="text-3xl font-bold text-center text-gray-800">User Dashboard</p>
       </nav>
 
       <h2 className="text-4xl font-semibold text-center mb-6 text-gray-800">Appointments</h2>

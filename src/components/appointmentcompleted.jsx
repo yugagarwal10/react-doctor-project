@@ -7,13 +7,18 @@ import { faUser, faClock, faClipboardList } from '@fortawesome/free-solid-svg-ic
 const Appointmentcompleted = () => {
   const navigate = useNavigate();
   const [info, setInfo] = useState([]);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    getData();
-  }, []);
+    if (!token) {
+        navigate("/Login")
+    }
+    else {
+        getData()
+    }
+}, []);
 
   const getData = async () => {
-    const token = localStorage.getItem("token");
     const result = await axios.get("http://localhost:5000/appointmentList", { headers: { token: token, status: 1 } });
     setInfo(result.data);
   };

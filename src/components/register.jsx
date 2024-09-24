@@ -1,79 +1,127 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-import "../App.css"
+import { useForm } from 'react-hook-form';
 
 const Register = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const [info, setinfo] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-    type: "",
+    fullName: '',
+    email: '',
+    password: '',
+    type: '',
   });
-  // useEffect(() => {
-  //   const token = localStorage.getItem("token");
-  //   if (token) {
-  //     navigate("/mainpage")
-  //   }
-  // })
+
   const handleInputChange = (event) => {
     event.preventDefault();
-
     const { name, value } = event.target;
     setinfo((info) => ({
       ...info,
-      [name]: value
+      [name]: value,
     }));
   };
+
   const navigate = useNavigate();
-  const handleSubmit = async (e) => {
+
+  const handlesubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/userRegister", {
+      const response = await axios.post('http://localhost:5000/userRegister', {
         fullName: info.fullName,
         email: info.email,
         password: info.password,
-        type: info.type
+        type: info.type,
       });
       console.log('User saved:', response.data);
       toast.success('User register successfully!');
-      navigate("/login");
+      navigate('/login');
     } catch (error) {
-      toast.error((Object.values(error.response.data).toString()))
+      toast.error((Object.values(error.response.data).toString()));
       console.error('Error submitting the form', (Object.values(error.response.data).toString()));
     }
-  }
+  };
+
   const redirect = (e) => {
     e.preventDefault();
-    navigate("/login");
-  }
-  return (
-    <div className="wrapper">
-      <h2>Registration</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="input-box">
-          <input type="text" placeholder="Enter your name" name='fullName' onChange={handleInputChange} ></input>
-        </div>
-        <div className="input-box">
-          <input type="text" placeholder="Enter your email" name='email' onChange={handleInputChange} ></input>
-        </div>
-        <div className="input-box">
-          <input type="text" placeholder="Enter password" name='password' onChange={handleInputChange} ></input>
-        </div>
-        <div className="input-box">
-          <input type="text" placeholder="Enter type" name='type' onChange={handleInputChange} ></input>
-        </div>
-        <div className="input-box button">
-          <input type="Submit"></input> <ToastContainer />
-        </div>
-        <div className="text">
-          <h3 onClick={redirect}>Already have an account?Login now</h3>
-        </div>
-      </form>
-    </div>
-  )
-}
+    navigate('/login');
+  };
 
-export default Register
+  return (
+    <div className="min-h-100vh flex items-center justify-center bg-gradient-to-br from-purple-500 to-blue-600 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 p-10 bg-white shadow-2xl rounded-lg animate-fadeIn">
+        <h2 className="text-center text-3xl font-extrabold text-gray-900">Register</h2>
+        <form onSubmit={handleSubmit(handlesubmit)} className="space-y-6">
+          <div className="rounded-md shadow-sm space-y-4">
+            <div className="relative">
+              <input
+                type="text"
+                {...register("fullName", { required: "fullName is required", pattern: { value: /^[a-zA-Z ]+$/, message: "fullName is not valid" } })}
+                name="fullName"
+                onChange={handleInputChange}
+                className="appearance-none rounded-md w-full py-3 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Full Name"
+              />
+               {errors.fullName && <span className="text-red-500 text-sm">{errors.fullName.message}</span>}
+            </div>
+            <div className="relative">
+              <input
+                type="email"
+                {...register("email", { required: "Email is required", pattern: { value: /^\S+@\S+$/i, message: "Email is not valid" } })}
+                onChange={handleInputChange}
+                className="appearance-none rounded-md w-full py-3 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Email"
+              />
+              {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
+            </div>
+            <div className="relative">
+              <input
+                type="password"
+                {...register("password", { required: "Password is required", minLength: { value: 6, message: "Password must be at least 6 characters" } })}
+                name="password"
+                onChange={handleInputChange}
+                className="appearance-none rounded-md w-full py-3 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Password"
+              />
+              {errors.password && <span className="text-red-500">{errors.password.message}</span>}
+            </div>
+            <div className="relative">
+              <input
+                type="text"
+                {...register("type", { required: "type is required" })}
+                name="type"
+                onChange={handleInputChange}
+                className="appearance-none rounded-md w-full py-3 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Type"
+              />
+              {errors.type && <span className="text-red-500">{errors.type.message}</span>}
+            </div>
+          </div>
+          <div>
+            <button
+              type="submit"
+              className="w-full flex justify-center py-3 px-6 border border-transparent rounded-md shadow-md text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-indigo-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform hover:scale-105 transition-all duration-300 ease-in-out"
+            >
+              Register
+            </button>
+            <ToastContainer />
+          </div>
+        </form>
+        <div className="text-center mt-6">
+          <p className="text-gray-600">Already have an account?
+            <span
+              onClick={redirect}
+              className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
+            >
+              Login now
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Register;

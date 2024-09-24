@@ -11,14 +11,19 @@ const Showappointent = () => {
         navigate("/Usermain")
     }
     const [info, setinfo] = useState([]);
-    useEffect(() => {
-        getdata()
-    }, []);
     const token = localStorage.getItem("token");
     const getdata = async (event) => {
         const result = await axios.get("http://localhost:5000/appointmentList", { headers: { token: token, status: 0 } });
         setinfo(result.data);
     }
+    useEffect(() => {
+        if (!token) {
+            navigate("/Login")
+        }
+        else {
+            getdata()
+        }
+    }, []);
     const handleDelete = async (id) => {
         try {
             const response = await axios.delete(`http://localhost:5000/deleAppointment?id=${id}`, { headers: { token: token } })
