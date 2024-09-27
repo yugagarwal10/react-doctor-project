@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import "../showappointment.css"
+import "../assets/showappointment.css"
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';

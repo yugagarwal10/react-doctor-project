@@ -33,12 +33,13 @@ const DoctorProfile = () => {
     }, []);
 
     const getData = async () => {
-        const result = await axios.get("http://localhost:5000/doctorDetails", { headers: { token } });
+        const result = await axios.get("http://localhost:5000/doctorDetails", { headers: { token:token } });
         const decryptedData = await decryptData(result.data.mac, result.data.value);
         setInfo(decryptedData.data);
     };
     const logout = async (e) => {
         e.preventDefault();
+        const result = await axios.get("http://localhost:5000/userLogout", { headers: { token:token } });
         localStorage.removeItem("token");
         navigate("/Login")
     }

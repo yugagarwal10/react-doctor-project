@@ -31,6 +31,10 @@ const user = new mongoose.Schema({
     },
     contactNumber: {
         type: Number
+    },
+    isverify: {
+        type: Number,
+        default: 0,
     }
 },
     { timestamps: true });

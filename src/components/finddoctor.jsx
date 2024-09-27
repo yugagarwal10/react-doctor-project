@@ -1,7 +1,7 @@
 import { React, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import "../showappointment.css";
+import "../assets/showappointment.css";
 import axios from 'axios';
 
 const Finddoctor = () => {
@@ -49,12 +49,12 @@ const Finddoctor = () => {
                   <img 
                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoaTnj2VuwfHPqvefk025J8uVhz1UfYtYWug&s" 
                     alt="Doctor Image" 
-                    className="w-full h-52 object-cover card-img transition-transform duration-300"
+                    className="w-full h-52 object-cover card-img transition-transform duration-300 mt-8"
                   />
-                  <div className="p-2">
+                  <div className="p-2 py-6">
                     <h2 className="text-2xl font-bold mb-2 break-words">{user.fullName}</h2>
-                    <div className="mt-4">
-                      <p><span className="font-semibold p-2  break-words">Email:</span>{user.email}</p>
+                    <div className="mt-4 mb-2">
+                      <p><span className="font-semibold p-2 mb-2 break-words">Email:</span>{user.email}</p>
                     </div>
                   </div>
                 </div>

@@ -40,6 +40,10 @@ const doctor = new mongoose.Schema({
     },
     about:{
         type:String,
+    },
+    isverify: {
+        type: Number,
+        default: 0,
     }
 },
     { timestamps: true });

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import "../App.css"
+import "../assets/App.css"
 const Login = () => {
   const { handleSubmit, register, formState: { errors } } = useForm()
   const [info, setinfo] = useState({
@@ -31,11 +31,11 @@ const Login = () => {
       toast.success('User login successfully!');
       localStorage.setItem("token", data.data.token)
       const type = data.data.type;
-      const Doctorstatus = data.data.status;
-      const userStatus = data.data.status;
+      const Doctorverify = data.data.isverify;
+      const userverify = data.data.isverify;
 
       if (type == "doctor") {
-        if (Doctorstatus == 1) {
+        if (Doctorverify == 1) {
           navigate("/Doctorprofile")
         }
         else {
@@ -43,7 +43,7 @@ const Login = () => {
         }
       }
       if (type == "user") {
-        if (userStatus == 1) {
+        if (userverify == 1) {
           navigate("/Usermain")
         }
         else {

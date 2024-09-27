@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from 'react'
 import {useNavigate} from 'react-router-dom'
-import "../usermain.css"
+import "../assets/usermain.css"
 import axios from 'axios';
 
 const Usermain = () => {
@@ -41,6 +41,7 @@ const Usermain = () => {
   }
   const logout=async(e)=>{
     e.preventDefault();
+    const result = await axios.get("http://localhost:5000/userLogout", { headers: { token:token } });
     localStorage.removeItem("token");
     navigate("/Login")
   }

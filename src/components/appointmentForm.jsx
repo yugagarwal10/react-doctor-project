@@ -2,7 +2,7 @@ import { React, useEffect, useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import "../userform.css";
+import "../assets/userform.css";
 
 const AppointmentForm = () => {
     const [info, setinfo] = useState({

@@ -29,6 +29,7 @@ app.get("/fullAppointmentList", userController.fullAppointmentList);
 app.delete("/deleAppointment", userController.deleAppointment);
 app.get("/doctorList", userController.doctorList)
 app.post("/DecryptData", userController.DecryptData)
+app.get("/userLogout", userController.userLogout)
 app.post("/confirmAppointment", userController.confirmAppointment)
 app.listen(5000, () => {
   console.log("app is running on port 5000");
