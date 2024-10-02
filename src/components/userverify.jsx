@@ -1,9 +1,10 @@
 import { React, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import {toast } from 'react-toastify';
 import axios from 'axios';
 import "../assets/App.css"
 import { useForm } from 'react-hook-form';
+import { API_URL } from '../service/config';
 
 const Userverify = () => {
   const { handleSubmit, register, formState: { errors } } = useForm()
@@ -38,7 +39,7 @@ const Userverify = () => {
       formData.append("image", info.image);
       formData.append("address", info.address);
       formData.append("contactNumber", info.contactNumber);
-      const response = await axios.post("http://localhost:5000/addUserDetails", formData, {
+      const response = await axios.post(API_URL+"/addUserDetails", formData, {
         headers: {
           token: token
         }
@@ -89,7 +90,6 @@ const Userverify = () => {
             <button type="submit" className="w-full bg-purple-600 text-white font-semibold py-3 rounded-md shadow-lg hover:bg-purple-700 transition-all duration-300 ease-in-out transform hover:scale-105">
               Submit
             </button>
-            <ToastContainer />
           </div>
         </form>
       </div>

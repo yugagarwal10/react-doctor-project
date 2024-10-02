@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import "../assets/showappointment.css";
 import axios from 'axios';
+import { API_URL } from '../service/config';
 
 const Finddoctor = () => {
   const [list, setlist] = useState([]);
@@ -10,7 +11,7 @@ const Finddoctor = () => {
 
   const getdata = async () => {
     try {
-      const result = await axios.get("http://localhost:5000/doctorList");
+      const result = await axios.get(API_URL+"/doctorList");
       setlist(result.data);
     } catch (error) {
       toast.error('Failed to fetch doctor data');

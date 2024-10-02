@@ -1,9 +1,13 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import React, { useEffect, useState } from 'react'
+import {useNavigate} from 'react-router-dom';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import "../assets/App.css"
+import { API_URL } from '../service/config';
+import { decryptData } from '../service/decrypt';
+
+
 const Login = () => {
   const { handleSubmit, register, formState: { errors } } = useForm()
   const [info, setinfo] = useState({
@@ -22,7 +26,7 @@ const Login = () => {
   const navigate = useNavigate();
   const handlesubmit = async (e) => {
     try {
-      const response = await axios.post("http://localhost:5000/userLogin", {
+      const response = await axios.post(API_URL+"/userLogin", {
         email: info.email,
         password: info.password
       });
@@ -34,16 +38,16 @@ const Login = () => {
       const Doctorverify = data.data.isverify;
       const userverify = data.data.isverify;
 
-      if (type == "doctor") {
-        if (Doctorverify == 1) {
+      if (type === "doctor") {
+        if (Doctorverify === 1) {
           navigate("/Doctorprofile")
         }
         else {
           navigate("/Doctor")
         }
       }
-      if (type == "user") {
-        if (userverify == 1) {
+      if (type === "user") {
+        if (userverify === 1) {
           navigate("/Usermain")
         }
         else {
@@ -55,14 +59,6 @@ const Login = () => {
       console.error('Error submitting the form', (Object.values(error.response.data).toString()));
     }
   }
-  const decryptData = async (mac, value) => {
-    try {
-      const response = await axios.post("http://localhost:5000/DecryptData", { mac, value });
-      return response
-    } catch (error) {
-      console.error('Error submitting the form', error);
-    }
-  };
   return (
     <div className="min-h-100vh  flex items-center justify-center bg-gradient-to-br from-purple-500 to-blue-600 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 p-10 bg-white shadow-2xl rounded-lg animate-fadeIn">
@@ -98,7 +94,6 @@ const Login = () => {
             >
               Login
             </button>
-            <ToastContainer />
           </div>
         </form>
         <div className="text-center mt-6">

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faClock, faClipboardList, faCheckCircle, faTimesCircle, faHourglassHalf, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { API_URL } from '../service/config';
 
 const Medicalrecords = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const Medicalrecords = () => {
     }
   }, []);
   const getData = async () => {
-    const result = await axios.get("http://localhost:5000/fullAppointmentList", { headers: { token: token } });
+    const result = await axios.get(API_URL+"/fullAppointmentList", { headers: { token: token } });
     setInfo(result.data);
   };
 

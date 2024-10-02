@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faClock, faClipboardList } from '@fortawesome/free-solid-svg-icons';
+import { API_URL } from '../service/config';
 
 const Appointmentcompleted = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const Appointmentcompleted = () => {
 }, []);
 
   const getData = async () => {
-    const result = await axios.get("http://localhost:5000/appointmentList", { headers: { token: token, status: 1 } });
+    const result = await axios.get(API_URL+"/appointmentList", { headers: { token: token, status: 1 } });
     setInfo(result.data);
   };
 

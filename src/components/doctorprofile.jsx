@@ -1,6 +1,8 @@
 import { React, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../service/config';
+import { decryptData } from '../service/decrypt';
 
 const DoctorProfile = () => {
     const navigate = useNavigate();
@@ -12,16 +14,6 @@ const DoctorProfile = () => {
         about: "",
         image:"",
     });
-
-    const decryptData = async (mac, value) => {
-        try {
-            const response = await axios.post("http://localhost:5000/DecryptData", { mac, value });
-            return response;
-        } catch (error) {
-            console.error('Error during decryption', error);
-        }
-    };
-
     const token = localStorage.getItem("token");
     useEffect(() => {
         if (!token) {
@@ -33,13 +25,13 @@ const DoctorProfile = () => {
     }, []);
 
     const getData = async () => {
-        const result = await axios.get("http://localhost:5000/doctorDetails", { headers: { token:token } });
+        const result = await axios.get(API_URL+"/doctorDetails", { headers: { token:token } });
         const decryptedData = await decryptData(result.data.mac, result.data.value);
         setInfo(decryptedData.data);
     };
     const logout = async (e) => {
         e.preventDefault();
-        const result = await axios.get("http://localhost:5000/userLogout", { headers: { token:token } });
+        const result = await axios.get(API_URL+"/userLogout", { headers: { token:token } });
         localStorage.removeItem("token");
         navigate("/Login")
     }

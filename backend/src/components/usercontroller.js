@@ -80,7 +80,6 @@ const userLogin = async (req, res) => {
         if (finddoctor) {
             const password = finddoctor.password;
             const result = await bcrypt.compare(Enteredpassword, password)
-            console.log(result);
             if (result == false) {
                 return commonfun.sendError(req, res, { message: "wrong password" }, 401)
             }

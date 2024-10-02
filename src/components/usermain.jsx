@@ -2,6 +2,8 @@ import { React, useState, useEffect } from 'react'
 import {useNavigate} from 'react-router-dom'
 import "../assets/usermain.css"
 import axios from 'axios';
+import { API_URL } from '../service/config';
+import { decryptData } from '../service/decrypt';
 
 const Usermain = () => {
   const [info, setinfo] = useState({
@@ -10,14 +12,6 @@ const Usermain = () => {
     contactNumber: "",
     image:"",
   })
-  const decryptData = async (mac, value) => {
-    try {
-      const response = await axios.post("http://localhost:5000/DecryptData", { mac, value });
-      return response
-    } catch (error) {
-      console.error('Error submitting the form', error);
-    }
-  };
   const navigate=useNavigate()
   const token = localStorage.getItem("token");
   useEffect(()=>{
@@ -30,7 +24,7 @@ const Usermain = () => {
   },[]);
   const getdata = async () => {
     try {
-      const result = await axios.get("http://localhost:5000/getUserDetails", { headers: { token: token } });
+      const result = await axios.get(API_URL+"/getUserDetails", { headers: { token: token } });
       const decryptdata = await decryptData(result.data.mac, result.data.value)
       setinfo(decryptdata.data); 
     } catch (error) {
@@ -41,11 +35,11 @@ const Usermain = () => {
   }
   const logout=async(e)=>{
     e.preventDefault();
-    const result = await axios.get("http://localhost:5000/userLogout", { headers: { token:token } });
+    const result = await axios.get(API_URL+"/userLogout", { headers: { token:token } });
     localStorage.removeItem("token");
     navigate("/Login")
   }
-  const url=`http://localhost:5000/uploads/userProfile/${info.image}`
+  const url=API_URL+`/uploads/userProfile/${info.image}`
   return (
     <div>
       <div className="container">

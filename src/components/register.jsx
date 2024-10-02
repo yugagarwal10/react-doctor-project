@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
+import { API_URL } from '../service/config';
 
 const Register = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -27,7 +28,7 @@ const Register = () => {
 
   const handlesubmit = async (e) => {
     try {
-      const response = await axios.post('http://localhost:5000/userRegister', {
+      const response = await axios.post(API_URL+'/userRegister', {
         fullName: info.fullName,
         email: info.email,
         password: info.password,
@@ -103,7 +104,6 @@ const Register = () => {
             >
               Register
             </button>
-            <ToastContainer />
           </div>
         </form>
         <div className="text-center mt-6">

@@ -1,8 +1,9 @@
 import { React, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
+import { API_URL } from '../service/config';
 
 const Doctorprofileupdate = () => {
     const { handleSubmit, register, formState: { errors } } = useForm()
@@ -14,7 +15,6 @@ const Doctorprofileupdate = () => {
         endShiftTime:"",
         startShiftTime:""
     })
-console.log(info.email);
 
     const token = localStorage.getItem("token");
     useEffect(() => {
@@ -33,7 +33,7 @@ console.log(info.email);
     const navigate = useNavigate();
     const handlesubmit = async (e) => {
         try {
-            const response = await axios.patch("http://localhost:5000/updateDoctorProfile", {
+            const response = await axios.patch(API_URL+"/updateDoctorProfile", {
                 fullName: info.fullName,
                 about: info.about,
                 email: info.email,
@@ -123,7 +123,7 @@ console.log(info.email);
                         >
                             Go to Main Profile
                         </button>
-                    </div><ToastContainer />
+                    </div>
                 </form>
             </div>
         </div>

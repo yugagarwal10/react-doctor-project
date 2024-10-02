@@ -1,8 +1,9 @@
 import { React, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import {toast } from 'react-toastify';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
+import { API_URL } from '../service/config';
 
 const Userprofileupdate = () => {
     const { handleSubmit, register, formState: { errors } } = useForm()
@@ -30,7 +31,7 @@ const Userprofileupdate = () => {
     const navigate = useNavigate();
     const handlesubmit = async (e) => {
         try {
-            const response = await axios.patch("http://localhost:5000/updateUserProfile", {
+            const response = await axios.patch(API_URL+"/updateUserProfile", {
                 fullName: info.fullName,
                 contactNumber: info.contactNumber,
                 email: info.email,
@@ -101,7 +102,7 @@ const Userprofileupdate = () => {
                         >
                             Go to Main Profile
                         </button>
-                    </div><ToastContainer />
+                    </div>
                 </form>
             </div>
         </div>

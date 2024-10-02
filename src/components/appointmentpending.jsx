@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
+import { API_URL } from '../service/config';
 
 const Appointmentpending = () => {
   const navigate = useNavigate();
@@ -25,13 +26,13 @@ const Appointmentpending = () => {
     }
 }, []);
   const getData = async () => {
-    const result = await axios.get("http://localhost:5000/appointmentList", { headers: { token: token, status: 0 } });
+    const result = await axios.get(API_URL+"/appointmentList", { headers: { token: token, status: 0 } });
     setInfo(result.data);
   };
 
   const postResult = async (appointmentId, response) => {
     try {
-      const result = await axios.post("http://localhost:5000/confirmAppointment", { appointmentId: appointmentId, response: response }, { headers: { token: token } });
+      const result = await axios.post(API_URL+"/confirmAppointment", { appointmentId: appointmentId, response: response }, { headers: { token: token } });
       toast.success('appointment updated successfully!');
       getData();
     } catch (error) {

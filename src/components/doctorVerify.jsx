@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import {toast } from 'react-toastify';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
+import { API_URL } from '../service/config';
 
 const Doctor = () => {
   const { handleSubmit, register, formState: { errors } } = useForm();
@@ -28,11 +29,13 @@ const Doctor = () => {
     }
   };
   const token = localStorage.getItem("token");
+  
   useEffect(() => {
     if (!token) {
       navigate("/Login")
     }
-  }, []);
+  }, [token]);
+
   const handlesubmit = async (event) => {
     try {
       const token = localStorage.getItem("token");
@@ -43,7 +46,7 @@ const Doctor = () => {
       formData.append("endShiftTime", info.endShiftTime);
       formData.append("qualification", info.qualification);
       formData.append("about", info.about);   
-      const response = await axios.post("http://localhost:5000/addDoctorDetails", formData ,{
+      const response = await axios.post(API_URL+"/addDoctorDetails", formData ,{
         headers: { token: token },
         'Content-Type': 'multipart/form-data',
       })
@@ -130,7 +133,6 @@ const Doctor = () => {
             <button type="submit" className="w-full bg-purple-600 text-white font-semibold py-3 rounded-md shadow-lg hover:bg-purple-700 transition-all duration-300 ease-in-out transform hover:scale-105">
               Submit
             </button>
-            <ToastContainer />
           </div>
         </form>
       </div>

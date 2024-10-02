@@ -1,8 +1,9 @@
 import { React, useEffect, useState } from 'react'
-import { toast, ToastContainer } from 'react-toastify';
+import { toast} from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import "../assets/userform.css";
+import { API_URL } from '../service/config';
 
 const AppointmentForm = () => {
     const [info, setinfo] = useState({
@@ -22,7 +23,7 @@ const AppointmentForm = () => {
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
     const getdata = async () => {
-        const result = await axios.get("http://localhost:5000/doctorList");
+        const result = await axios.get(API_URL+"/doctorList");
         setlist(result.data)
     }
     useEffect(() => {
@@ -36,7 +37,7 @@ const AppointmentForm = () => {
     const handlesubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:5000/addAppointment", {
+            const response = await axios.post(API_URL+"/addAppointment", {
                 date: info.date,
                 reason: info.reason,
                 doctor: info.doctor
@@ -77,7 +78,7 @@ const AppointmentForm = () => {
                         Go to Main Profile
                     </button>
                 </div>
-            </div><ToastContainer />
+            </div>
         </div>
     )
 }

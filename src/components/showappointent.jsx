@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react'
 import "../assets/showappointment.css"
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { ToastContainer, toast } from 'react-toastify';
+import {toast } from 'react-toastify';
+import { API_URL } from '../service/config';
 
 const Showappointent = () => {
     const navigate = useNavigate();
     const [info, setinfo] = useState([]);
     const token = localStorage.getItem("token");
     const getdata = async (event) => {
-        const result = await axios.get("http://localhost:5000/appointmentList", { headers: { token: token, status: 0 } });
+        const result = await axios.get(API_URL+"/appointmentList", { headers: { token: token, status: 0 } });
         setinfo(result.data);
     }
     useEffect(() => {
@@ -22,7 +23,7 @@ const Showappointent = () => {
     }, []);
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`http://localhost:5000/deleAppointment?id=${id}`, { headers: { token: token } })
+            const response = await axios.delete(API_URL+`/deleAppointment?id=${id}`, { headers: { token: token } })
             toast.success('deleted successfully!');
             getdata()
         } catch (error) {
@@ -64,13 +65,13 @@ const Showappointent = () => {
                         )}
                     </div>
                     <div class="mt-10 w-full flex justify-center space-x-4 fade-in">
-                    <button
-          onClick={() => navigate("/Usermain")}
-          className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 transform hover:scale-105"
-        >
-          Go to Main Profile
-        </button>
-                    </div><ToastContainer />
+                        <button
+                            onClick={() => navigate("/Usermain")}
+                            className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 transform hover:scale-105"
+                        >
+                            Go to Main Profile
+                        </button>
+                    </div>
                 </div>
 
             </body>
