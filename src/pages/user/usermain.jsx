@@ -1,9 +1,9 @@
 import { React, useState, useEffect } from 'react'
 import {useNavigate} from 'react-router-dom'
-import "../assets/usermain.css"
+import "../../assets/usermain.css"
 import axios from 'axios';
-import { API_URL } from '../service/config';
-import { decryptData } from '../service/decrypt';
+import { API_URL } from '../../service/config';
+import { decryptData } from '../../service/decrypt';
 
 const Usermain = () => {
   const [info, setinfo] = useState({
@@ -58,19 +58,19 @@ const Usermain = () => {
           </button>
         </div>
         <div className="btn-group">
-          <button className="btn btn-appointment" onClick={()=>navigate("/AppointmentForm")}>
+          <button className="btn btn-appointment" onClick={()=>navigate("/user/appointmentform")}>
             <i className="fas fa-calendar"></i> Book Appointment
           </button>
-          <button className="btn btn-appointment" onClick={()=>navigate("/Showappointent")}>
+          <button className="btn btn-appointment" onClick={()=>navigate("/user/showappointent")}>
             <i className="fas fa-list-alt"></i>Show Appointment
           </button>
-          <button className="btn btn-appointment" onClick={()=>navigate("/Finddoctor")}>
+          <button className="btn btn-appointment" onClick={()=>navigate("/user/finddoctor")}>
             <i className="fas fa-user-md"></i> Find A Doctor
           </button>
-          <button className="btn btn-appointment" onClick={()=>navigate("/Medicalrecords")}>
+          <button className="btn btn-appointment" onClick={()=>navigate("/user/medicalrecords")}>
             <i className="fas fa-file-medical-alt"></i> Medical Records
           </button>
-          <button className="btn btn-appointment" onClick={()=>navigate("/Userprofileupdate")}>
+          <button className="btn btn-appointment" onClick={()=>navigate("/user/profileupdate")}>
             <i className="fas fa-file-medical-alt"></i> Update Profile
           </button>
         </div>

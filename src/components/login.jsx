@@ -40,18 +40,18 @@ const Login = () => {
 
       if (type === "doctor") {
         if (Doctorverify === 1) {
-          navigate("/Doctorprofile")
+          navigate("/doctor/profile")
         }
         else {
-          navigate("/Doctor")
+          navigate("/doctor/verify")
         }
       }
       if (type === "user") {
         if (userverify === 1) {
-          navigate("/Usermain")
+          navigate("/user/main")
         }
         else {
-          navigate("/Userverify")
+          navigate("/user/verify")
         }
       }
     } catch (error) {

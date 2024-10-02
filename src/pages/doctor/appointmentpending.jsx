@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
-import { API_URL } from '../service/config';
+import { API_URL } from '../../service/config';
 
 const Appointmentpending = () => {
   const navigate = useNavigate();
@@ -19,20 +19,20 @@ const Appointmentpending = () => {
   };
   useEffect(() => {
     if (!token) {
-        navigate("/Login")
+      navigate("/Login")
     }
     else {
-        getData()
+      getData()
     }
-}, []);
+  }, []);
   const getData = async () => {
-    const result = await axios.get(API_URL+"/appointmentList", { headers: { token: token, status: 0 } });
+    const result = await axios.get(API_URL + "/appointmentList", { headers: { token: token, status: 0 } });
     setInfo(result.data);
   };
 
   const postResult = async (appointmentId, response) => {
     try {
-      const result = await axios.post(API_URL+"/confirmAppointment", { appointmentId: appointmentId, response: response }, { headers: { token: token } });
+      const result = await axios.post(API_URL + "/confirmAppointment", { appointmentId: appointmentId, response: response }, { headers: { token: token } });
       toast.success('appointment updated successfully!');
       getData();
     } catch (error) {
@@ -89,7 +89,7 @@ const Appointmentpending = () => {
 
       <div className="flex justify-center mt-8">
         <button
-          onClick={() => navigate("/Doctorprofile")}
+          onClick={() => navigate("/doctor/profile")}
           className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 transform hover:scale-105"
         >
           Go to Main Profile

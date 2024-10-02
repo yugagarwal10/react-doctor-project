@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import "../assets/showappointment.css"
+import "../../assets/showappointment.css"
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import {toast } from 'react-toastify';
-import { API_URL } from '../service/config';
+import { API_URL } from '../../service/config';
 
 const Showappointent = () => {
     const navigate = useNavigate();
@@ -66,7 +66,7 @@ const Showappointent = () => {
                     </div>
                     <div class="mt-10 w-full flex justify-center space-x-4 fade-in">
                         <button
-                            onClick={() => navigate("/Usermain")}
+                            onClick={() => navigate("/user/main")}
                             className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 transform hover:scale-105"
                         >
                             Go to Main Profile

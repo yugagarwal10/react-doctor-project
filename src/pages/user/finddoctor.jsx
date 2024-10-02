@@ -1,9 +1,9 @@
 import { React, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import "../assets/showappointment.css";
+import "../../assets/showappointment.css";
 import axios from 'axios';
-import { API_URL } from '../service/config';
+import { API_URL } from '../../service/config';
 
 const Finddoctor = () => {
   const [list, setlist] = useState([]);
@@ -33,7 +33,7 @@ const Finddoctor = () => {
         <div className="container mx-auto py-10">
           <div className="flex justify-end mb-6">
           <button
-          onClick={() => navigate("/Usermain")}
+          onClick={() => navigate("/user/main")}
           className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 transform hover:scale-105"
         >
           Go to Main Profile

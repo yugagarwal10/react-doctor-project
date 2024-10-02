@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faClock, faClipboardList, faCheckCircle, faTimesCircle, faHourglassHalf, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { API_URL } from '../service/config';
+import { API_URL } from '../../service/config';
 
 const Medicalrecords = () => {
   const navigate = useNavigate();
@@ -123,7 +123,7 @@ const Medicalrecords = () => {
       </div>
       <div className="flex justify-center mt-8">
         <button
-          onClick={() => navigate("/Usermain")}
+          onClick={() => navigate("/user/main")}
           className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 transform hover:scale-105"
         >
           Go to Main Profile

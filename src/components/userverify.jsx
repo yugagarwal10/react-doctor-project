@@ -46,7 +46,7 @@ const Userverify = () => {
       });
       console.log('data uploaded:', response.data);
       toast.success('data uploaded successfully!');
-      navigate("/Usermain")
+      navigate("/user/main")
     } catch (error) {
       toast.error((Object.values(error.response.data).toString()))
       console.error('Error submitting the form', (Object.values(error.response.data).toString()));

@@ -2,8 +2,8 @@ import { React, useEffect, useState } from 'react'
 import { toast} from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import "../assets/userform.css";
-import { API_URL } from '../service/config';
+import "../../assets/userform.css";
+import { API_URL } from '../../service/config';
 
 const AppointmentForm = () => {
     const [info, setinfo] = useState({
@@ -45,7 +45,7 @@ const AppointmentForm = () => {
                 { headers: { token: token } });
             console.log('User saved:', response.data);
             toast.success('User register successfully!');
-            navigate("/Showappointent");
+            navigate("/user/showappointent");
         } catch (error) {
             toast.error(Object.values(error.response.data).toString());
             console.error(Object.values(error.response.data).toString());
@@ -72,7 +72,7 @@ const AppointmentForm = () => {
                 </form>
                 <div className="flex justify-center mt-8">
                     <button
-                        onClick={() => navigate("/Usermain")}
+                        onClick={() => navigate("/user/main")}
                         className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 transform hover:scale-105"
                     >
                         Go to Main Profile

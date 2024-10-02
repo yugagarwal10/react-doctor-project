@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import {toast } from 'react-toastify';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import { API_URL } from '../service/config';
+import { API_URL } from '../../service/config';
+import { CheckToken } from '../../service/token';
 
 const Userprofileupdate = () => {
     const { handleSubmit, register, formState: { errors } } = useForm()
@@ -15,11 +16,7 @@ const Userprofileupdate = () => {
     })
 
     const token = localStorage.getItem("token");
-    useEffect(() => {
-        if (!token) {
-            navigate("/Login")
-        }
-    }, []);
+    CheckToken(token)
     const handleInputChange = (event) => {
         event.preventDefault();
         const { name, value } = event.target;
@@ -43,7 +40,7 @@ const Userprofileupdate = () => {
             });
             console.log('data uploaded:', response.data);
             toast.success('data uploaded successfully!');
-            navigate("/Usermain")
+            navigate("/user/main")
         } catch (error) {
             toast.error((Object.values(error.response.data).toString()))
             console.error('Error submitting the form', (Object.values(error.response.data).toString()));
@@ -97,7 +94,7 @@ const Userprofileupdate = () => {
                     </div>
                     <div class="mt-10 w-full flex justify-center space-x-4 fade-in">
                         <button
-                            onClick={() => navigate("/Usermain")}
+                            onClick={() => navigate("/user/main")}
                             className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 transform hover:scale-105"
                         >
                             Go to Main Profile

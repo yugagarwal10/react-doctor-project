@@ -1,8 +1,8 @@
 import { React, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { API_URL } from '../service/config';
-import { decryptData } from '../service/decrypt';
+import { API_URL } from '../../service/config';
+import { decryptData } from '../../service/decrypt';
 
 const DoctorProfile = () => {
     const navigate = useNavigate();
@@ -67,19 +67,19 @@ const DoctorProfile = () => {
             </div>
 
             <div className="flex justify-center space-x-4 mb-8">
-                <button onClick={() => navigate("/Appointmentpending")}
+                <button onClick={() => navigate("/doctor/appointmentpending")}
                     className="bg-gradient-to-r from-blue-500 to-teal-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-teal-600 transition duration-300 transform hover:scale-105">
                     <i className="fas fa-clock"></i> Pending Appointments
                 </button>
-                <button onClick={() => navigate("/Appointmentcompleted")}
+                <button onClick={() => navigate("/doctor/appointmentcompleted")}
                     className="bg-gradient-to-r from-green-500 to-lime-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-green-600 hover:to-lime-600 transition duration-300 transform hover:scale-105">
                     <i className="fas fa-check"></i> Completed Appointments
                 </button>
-                <button onClick={() => navigate("/Allappointment")}
+                <button onClick={() => navigate("/doctor/allappointment")}
                     className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-teal-600 hover:to-cyan-600 transition duration-300 transform hover:scale-105">
                     <i className="fas fa-list"></i> All Appointments
                 </button>
-                <button onClick={() => navigate("/Doctorprofileupdate")}
+                <button onClick={() => navigate("/doctor/profileupdate")}
                     className="bg-gradient-to-r from-green-500 to-lime-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-green-600 hover:to-lime-600 transition duration-300 transform hover:scale-105">
                      <i className="fas fa-list"></i> Update Profile
                 </button>

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import { API_URL } from '../service/config';
+import { API_URL } from '../../service/config';
 
 const Doctorprofileupdate = () => {
     const { handleSubmit, register, formState: { errors } } = useForm()
@@ -47,7 +47,7 @@ const Doctorprofileupdate = () => {
             });
             console.log('data uploaded:', response.data);
             toast.success('data uploaded successfully!');
-            navigate("/Doctorprofile")
+            navigate("/doctor/profile")
         } catch (error) {
             toast.error((Object.values(error.response.data).toString()))
             console.error('Error submitting the form', (Object.values(error.response.data).toString()));
@@ -118,7 +118,7 @@ const Doctorprofileupdate = () => {
                     </div>
                     <div className="mt-10 w-full flex justify-center space-x-4 fade-in">
                         <button
-                            onClick={() => navigate("/Doctorprofile")}
+                            onClick={() => navigate("/doctor/profile")}
                             className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 transform hover:scale-105"
                         >
                             Go to Main Profile
