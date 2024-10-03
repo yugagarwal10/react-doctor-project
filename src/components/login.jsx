@@ -6,6 +6,8 @@ import { useForm } from 'react-hook-form';
 import "../assets/App.css"
 import { API_URL } from '../service/config';
 import { decryptData } from '../service/decrypt';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
 const Login = () => {
@@ -14,6 +16,15 @@ const Login = () => {
     email: "",
     password: ""
   });
+  const [showPassword,setShowPassword]=useState(false);
+  const togglePasswordVisibility=()=>{
+    if(showPassword===false){
+      setShowPassword(true)
+    }
+    else{
+      setShowPassword(false)
+    }
+  }
   const handleInputChange = (event) => {
     event.preventDefault();
 
@@ -34,6 +45,7 @@ const Login = () => {
       console.log('login successfully:', response);
       toast.success('User login successfully!');
       localStorage.setItem("token", data.data.token)
+      localStorage.setItem("type", data.data.type)
       const type = data.data.type;
       const Doctorverify = data.data.isverify;
       const userverify = data.data.isverify;
@@ -77,13 +89,19 @@ const Login = () => {
             </div>
             <div className="relative">
               <input
-                type="password"
+                type={showPassword ? 'password':'text'}
                 {...register("password", { required: "Password is required", minLength: { value: 5, message: "Password must be at least 6 characters" } })}
                 name="password"
                 onChange={handleInputChange}
                 className="appearance-none rounded-md w-full py-3 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Password"
               />
+               <span
+                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                onClick={togglePasswordVisibility}
+              >
+                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} className="text-gray-600" />
+              </span>
               {errors.password && <span className="text-red-500">{errors.password.message}</span>}
             </div>
           </div>

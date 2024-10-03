@@ -32,6 +32,7 @@ const Usermain = () => {
     e.preventDefault();
      await axios.get(API_URL+"/userLogout", { headers: { token:token } });
     localStorage.removeItem("token");
+    localStorage.removeItem("type");
     navigate("/Login")
   }
   const url=API_URL+`/uploads/userProfile/${info.image}`
