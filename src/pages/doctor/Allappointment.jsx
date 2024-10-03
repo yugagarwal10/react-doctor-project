@@ -11,12 +11,7 @@ const Allappointment = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (!token) {
-        navigate("/Login")
-    }
-    else {
         getData()
-    }
 }, []);
 
   const getData = async () => {

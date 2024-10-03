@@ -15,12 +15,7 @@ const Usermain = () => {
   const navigate=useNavigate()
   const token = localStorage.getItem("token");
   useEffect(()=>{
-    if(!token){
-      navigate("/Login")
-    }
-    else{
       getdata()
-    }
   },[]);
   const getdata = async () => {
     try {
@@ -28,14 +23,14 @@ const Usermain = () => {
       const decryptdata = await decryptData(result.data.mac, result.data.value)
       setinfo(decryptdata.data); 
     } catch (error) {
-      if(error.response.status==401){
+      if(error.response.status===401){
         navigate("/Login")
       }      
     }
   }
   const logout=async(e)=>{
     e.preventDefault();
-    const result = await axios.get(API_URL+"/userLogout", { headers: { token:token } });
+     await axios.get(API_URL+"/userLogout", { headers: { token:token } });
     localStorage.removeItem("token");
     navigate("/Login")
   }
@@ -46,7 +41,7 @@ const Usermain = () => {
         <h1 className="title">Welcome to Your Dashboard</h1>
         <div className="user-info">
           <div className="user-avatar">
-            <img src={url} alt="User Image"></img>
+            <img src={url} alt="User"></img>
           </div>
           <div className="user-details">
             <h2>Name:{info.fullName.toUpperCase()}</h2>

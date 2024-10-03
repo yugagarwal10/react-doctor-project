@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { API_URL } from '../../service/config';
+import { decryptData } from '../../service/decrypt';
 
 const Doctorprofileupdate = () => {
     const { handleSubmit, register, formState: { errors } } = useForm()
@@ -17,11 +18,22 @@ const Doctorprofileupdate = () => {
     })
 
     const token = localStorage.getItem("token");
+    const [doctor, setDoctor] = useState({
+        fullName: "",
+        expertise: [],
+        email: "",
+        qualification: "",
+        about: "",
+        image:"",
+    });
     useEffect(() => {
-        if (!token) {
-            navigate("/Login")
-        }
+            getData();
     }, []);
+    const getData = async () => {
+        const result = await axios.get(API_URL+"/doctorDetails", { headers: { token:token } });
+        const decryptedData = await decryptData(result.data.mac, result.data.value);
+        setDoctor(decryptedData.data);
+    };
     const handleInputChange = (event) => {
         event.preventDefault();
         const { name, value } = event.target;
@@ -68,13 +80,13 @@ const Doctorprofileupdate = () => {
                         <div className="relative">
                             <label className="block text-lg font-medium text-gray-700 mb-3" htmlFor="full_name">Full Name</label>
                             <input type="text"
-                                {...register("fullName", { required: "fullName is required", pattern: { value: /^[a-zA-Z ]+$/, message: "fullName is not valid" } })} name="fullName" id="full_name" onChange={handleInputChange} className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder="John Doe"></input>
+                                {...register("fullName", { required: "fullName is required", pattern: { value: /^[a-zA-Z ]+$/, message: "fullName is not valid" } })} name="fullName" id="full_name" onChange={handleInputChange} className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder={doctor.fullName}></input>
                             {errors.fullName && <span className="text-red-500 text-sm">{errors.fullName.message}</span>}
                         </div>
                         <div className="relative">
                             <label className="block text-lg font-medium text-gray-700 mb-3" htmlFor="email">Email</label>
                             <input type="text"
-                                {...register("email", { required: "Email is required", pattern: { value: /^[a-zA-Z0-9.]+@[a-z]+.[a-z]+$/, message: "Email is not valid" } })} onChange={handleInputChange} name="email" id="email" className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-purple-500 focus:outline-none focus:border-purple-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder="johndoe@example.com" ></input>
+                                {...register("email", { required: "Email is required", pattern: { value: /^[a-zA-Z0-9.]+@[a-z]+.[a-z]+$/, message: "Email is not valid" } })} onChange={handleInputChange} name="email" id="email" className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-purple-500 focus:outline-none focus:border-purple-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder={doctor.email}></input>
                             {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
                         </div>
                     </div>
@@ -99,13 +111,13 @@ const Doctorprofileupdate = () => {
                         <div className="relative">
                             <label className="block text-lg font-medium text-gray-700 mb-3" htmlFor="full_name">Qualification</label>
                             <input type="text"
-                                {...register("qualification", { required: "qualification is required", pattern: { value: /^[a-zA-Z ]+$/, message: "qualification is not valid" } })} name="qualification" id="full_name" onChange={handleInputChange} className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder="Mbbs"></input>
+                                {...register("qualification", { required: "qualification is required", pattern: { value: /^[a-zA-Z ]+$/, message: "qualification is not valid" } })} name="qualification" id="full_name" onChange={handleInputChange} className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder={doctor.expertise}></input>
                             {errors.qualification && <span className="text-red-500 text-sm">{errors.qualification.message}</span>}
                         </div>
                         <div className="relative">
                             <label className="block text-lg font-medium text-gray-700 mb-3" htmlFor="email">About</label>
                             <input type="text"
-                                {...register("about", { required: "about is required",pattern: { value: /^[a-zA-Z ]+$/, message: "about is not valid" } })} onChange={handleInputChange} name="about" id="email" className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-purple-500 focus:outline-none focus:border-purple-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder="speciality in surgery" ></input>
+                                {...register("about", { required: "about is required",pattern: { value: /^[a-zA-Z ]+$/, message: "about is not valid" } })} onChange={handleInputChange} name="about" id="email" className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-purple-500 focus:outline-none focus:border-purple-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder={doctor.about} ></input>
                             {errors.about && <span className="text-red-500 text-sm">{errors.about.message}</span>}
                         </div>
                     </div>

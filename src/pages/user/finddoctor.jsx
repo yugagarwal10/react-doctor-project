@@ -19,12 +19,7 @@ const Finddoctor = () => {
   };
   const token=localStorage.getItem("token");
   useEffect(() => {
-    if (!token) {
-        navigate("/Login")
-    }
-    else {
       getdata()
-    }
 }, []);
 
   return (

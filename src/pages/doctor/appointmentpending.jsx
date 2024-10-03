@@ -18,12 +18,7 @@ const Appointmentpending = () => {
     filteredDate((date) => ({ ...date, [name]: format }));
   };
   useEffect(() => {
-    if (!token) {
-      navigate("/Login")
-    }
-    else {
-      getData()
-    }
+      getData();
   }, []);
   const getData = async () => {
     const result = await axios.get(API_URL + "/appointmentList", { headers: { token: token, status: 0 } });

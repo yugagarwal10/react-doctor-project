@@ -27,12 +27,7 @@ const AppointmentForm = () => {
         setlist(result.data)
     }
     useEffect(() => {
-        if (!token) {
-            navigate("/Login")
-        }
-        else {
-            getdata()
-        }
+            getdata();
     }, []);
     const handlesubmit = async (e) => {
         e.preventDefault();

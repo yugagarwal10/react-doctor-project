@@ -11,12 +11,7 @@ const Medicalrecords = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (!token) {
-      navigate("/Login")
-    }
-    else {
       getData()
-    }
   }, []);
   const getData = async () => {
     const result = await axios.get(API_URL+"/fullAppointmentList", { headers: { token: token } });

@@ -1,6 +1,6 @@
 import React from 'react'
 import Register from "./components/register"
-import  Doctor from './components/doctorVerify'
+import Doctor from './components/doctorVerify'
 import Login from './components/login'
 import Allappointment from './pages/doctor/Allappointment'
 import Doctorprofile from './pages/doctor/doctorprofile'
@@ -15,24 +15,25 @@ import Appointmentcompleted from './pages/doctor/appointmentcompleted'
 import Appointmentpending from './pages/doctor/appointmentpending'
 import Userprofileupdate from './pages/user/userprofileupdate'
 import Doctorprofileupdate from './pages/doctor/doctorprofileupdate'
+import ProtectedRoutes from './components/protectedRoutes'
 const App = () => {
   return (
     <>
       <Routes>
+        <Route path="/doctor/verify" element={<ProtectedRoutes><Doctor /></ProtectedRoutes>} />
+        <Route path="/doctor/allappointment" element={<ProtectedRoutes><Allappointment /></ProtectedRoutes>} />
+        <Route path="/doctor/profile" element={<ProtectedRoutes><Doctorprofile /></ProtectedRoutes>} />
+        <Route path="/doctor/appointmentcompleted" element={<ProtectedRoutes><Appointmentcompleted /></ProtectedRoutes>} />
+        <Route path="/user/profileupdate" element={<ProtectedRoutes><Userprofileupdate /></ProtectedRoutes>} />
+        <Route path="/doctor/appointmentpending" element={<ProtectedRoutes><Appointmentpending /></ProtectedRoutes>} />
+        <Route path="/doctor/profileupdate" element={<ProtectedRoutes><Doctorprofileupdate /></ProtectedRoutes>} />
+        <Route path="/user/verify" element={<ProtectedRoutes><Userverify /></ProtectedRoutes>} />
+        <Route path="/user/appointmentform" element={<ProtectedRoutes><AppointmentForm /></ProtectedRoutes>} />
+        <Route path="/user/medicalrecords" element={<ProtectedRoutes><Medicalrecords /></ProtectedRoutes>} />
+        <Route path="/user/finddoctor" element={<ProtectedRoutes><Finddoctor /></ProtectedRoutes>} />
+        <Route path="/user/showappointent" element={<ProtectedRoutes><Showappointent /></ProtectedRoutes>} />
+        <Route path="/user/main" element={<ProtectedRoutes><Usermain /></ProtectedRoutes>} />
         <Route path="/" element={<Register />} />
-        <Route path="/doctor/verify" element={<Doctor />} />
-        <Route path="/doctor/allappointment" element={<Allappointment />} />
-        <Route path="/doctor/profile" element={<Doctorprofile />} />
-        <Route path="/doctor/appointmentcompleted" element={<Appointmentcompleted />} />
-        <Route path="/user/profileupdate" element={<Userprofileupdate />} />
-        <Route path="/doctor/appointmentpending" element={<Appointmentpending />} />
-        <Route path="/doctor/profileupdate" element={<Doctorprofileupdate />} />
-        <Route path="/user/verify" element={<Userverify />} />
-        <Route path="/user/appointmentform" element={<AppointmentForm />} />
-        <Route path="/user/medicalrecords" element={<Medicalrecords />} />
-        <Route path="/user/finddoctor" element={<Finddoctor />} />
-        <Route path="/user/showappointent" element={<Showappointent />} />
-        <Route path="/user/main" element={<Usermain />} />
         <Route path="/Login" element={<Login />} />
       </Routes>
     </>

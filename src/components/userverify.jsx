@@ -14,11 +14,6 @@ const Userverify = () => {
     contactNumber: ""
   })
   const token = localStorage.getItem("token");
-  useEffect(() => {
-    if (!token) {
-      navigate("/Login")
-    }
-  }, []);
   const handleInputChange = (event) => {
     event.preventDefault();
     const { name, value, files, type } = event.target;

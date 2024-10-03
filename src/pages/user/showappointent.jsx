@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import "../../assets/showappointment.css"
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import {toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { API_URL } from '../../service/config';
 
 const Showappointent = () => {
@@ -10,20 +10,15 @@ const Showappointent = () => {
     const [info, setinfo] = useState([]);
     const token = localStorage.getItem("token");
     const getdata = async (event) => {
-        const result = await axios.get(API_URL+"/appointmentList", { headers: { token: token, status: 0 } });
+        const result = await axios.get(API_URL + "/appointmentList", { headers: { token: token, status: 0 } });
         setinfo(result.data);
     }
     useEffect(() => {
-        if (!token) {
-            navigate("/Login")
-        }
-        else {
-            getdata()
-        }
+        getdata()
     }, []);
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(API_URL+`/deleAppointment?id=${id}`, { headers: { token: token } })
+            await axios.delete(API_URL + `/deleAppointment?id=${id}`, { headers: { token: token } })
             toast.success('deleted successfully!');
             getdata()
         } catch (error) {

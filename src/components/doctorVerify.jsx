@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { API_URL } from '../service/config';
@@ -29,13 +29,6 @@ const Doctor = () => {
     }
   };
   const token = localStorage.getItem("token");
-  
-  useEffect(() => {
-    if (!token) {
-      navigate("/Login")
-    }
-  }, [token]);
-
   const handlesubmit = async (event) => {
     try {
       const token = localStorage.getItem("token");
@@ -45,8 +38,8 @@ const Doctor = () => {
       formData.append("startShiftTime", info.startShiftTime);
       formData.append("endShiftTime", info.endShiftTime);
       formData.append("qualification", info.qualification);
-      formData.append("about", info.about);   
-      const response = await axios.post(API_URL+"/addDoctorDetails", formData ,{
+      formData.append("about", info.about);
+      const response = await axios.post(API_URL + "/addDoctorDetails", formData, {
         headers: { token: token },
         'Content-Type': 'multipart/form-data',
       })
