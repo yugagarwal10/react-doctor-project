@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { API_URL } from '../service/config';
+import { post } from '../service/axios';
 
 const Doctor = () => {
   const { handleSubmit, register, formState: { errors } } = useForm();
@@ -30,26 +30,20 @@ const Doctor = () => {
   };
   const token = localStorage.getItem("token");
   const handlesubmit = async (event) => {
-    try {
-      const token = localStorage.getItem("token");
-      const formData = new FormData();
-      formData.append("image", info.image);
-      formData.append("expertise", info.expertise);
-      formData.append("startShiftTime", info.startShiftTime);
-      formData.append("endShiftTime", info.endShiftTime);
-      formData.append("qualification", info.qualification);
-      formData.append("about", info.about);
-      const response = await axios.post(API_URL + "/addDoctorDetails", formData, {
-        headers: { token: token },
-        'Content-Type': 'multipart/form-data',
+    const formData = new FormData();
+    formData.append("image", info.image)
+    const image = await post(API_URL + "/addDoctorImage", formData);
+    await post(API_URL + "/addDoctorDetails", {
+      image: image.data, expertise: info.expertise, startShiftTime: info.startShiftTime,
+      endShiftTime: info.endShiftTime, qualification: info.qualification, about: info.about
+    }, {
+      headers: { authorization: token }
+    }).then(() => {
+      navigate("/doctor/profile");
+    })
+      .catch((error) => {
+        toast.error(Object.values(error.response.data).toString());
       })
-      console.log('Details uploaded successfully', response.data);
-      navigate("/Doctorprofile");
-      toast.success('Details uploaded successfully!');
-    } catch (error) {
-      toast.error(Object.values(error.response.data).toString());
-      console.error('Error submitting the form', Object.values(error.response.data).toString());
-    }
   };
 
   return (
@@ -115,7 +109,7 @@ const Doctor = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">About</label>
             <input type="text"
-              {...register("about", { required: "About is required", pattern: { value: /^[a-zA-Z ]+$/, message: "Invalid about" } })}
+              {...register("about", { required: "About is required", pattern: { value: /^[a-zA-Z ]{10,100}$/, message: "Invalid about" } })}
               name="about"
               placeholder="Tell something about yourself"
               className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm transition-transform duration-300 hover:scale-105"

@@ -2,22 +2,22 @@ import { React, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import "../../assets/showappointment.css";
-import axios from 'axios';
 import { API_URL } from '../../service/config';
+import { get } from '../../service/axios';
 
 const Finddoctor = () => {
   const [list, setlist] = useState([]);
   const navigate = useNavigate();
 
   const getdata = async () => {
-    try {
-      const result = await axios.get(API_URL+"/doctorList");
-      setlist(result.data);
-    } catch (error) {
-      toast.error('Failed to fetch doctor data');
-    }
+      await get(API_URL+"/doctorList")
+      .then((result)=>{
+        setlist(result.data);
+      })
+      .catch(()=>{
+        toast.error('Failed to fetch doctor data');
+      })
   };
-  const token=localStorage.getItem("token");
   useEffect(() => {
       getdata()
 }, []);
@@ -43,8 +43,7 @@ const Finddoctor = () => {
                   className="bg-white rounded-lg overflow-hidden shadow-lg transition-all duration-300 ease-in-out transform card-hover"
                 >
                   <img 
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoaTnj2VuwfHPqvefk025J8uVhz1UfYtYWug&s" 
-                    alt="Doctor Image" 
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoaTnj2VuwfHPqvefk025J8uVhz1UfYtYWug&s"alt='doctor' 
                     className="w-full h-52 object-cover card-img transition-transform duration-300 mt-8"
                   />
                   <div className="p-2 py-6">

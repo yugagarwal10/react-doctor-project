@@ -3,10 +3,10 @@ const appointment = new mongoose.Schema({
     userId: {
         type: mongoose.Types.ObjectId,
         require: true,
-        lowercase: true
     },
     doctorId:{
         type: mongoose.Types.ObjectId,
+        require: true,
     },
     reason:{
         type:String,
@@ -14,9 +14,11 @@ const appointment = new mongoose.Schema({
     },
     date:{
         type:String,
+        require: true,
     },
     time:{
         type:String,
+        require: true,
     },
     status:{
         type:Number,

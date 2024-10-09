@@ -14,14 +14,14 @@ const KEY_DEC = crypto
     .createHash('sha512')
     .update(APT_KEY_DEC)
     .digest('hex')
-    .substring(0, 32);
+    .substring(0, 32);    
 
 const DECRYPT_IV_KEY = crypto
     .createHash('sha512')
     .update(APT_DECRYPT_IV_KEY)
     .digest('hex')
     .substring(0, 16);
-
+    
 function decryptData(mac, value) {
     try {
         const buff = Buffer.from(value, 'base64')

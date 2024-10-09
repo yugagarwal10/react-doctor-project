@@ -1,10 +1,10 @@
-import { React, useState, useEffect } from 'react'
+import { React, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import {toast } from 'react-toastify';
-import axios from 'axios';
+import { toast } from 'react-toastify';
 import "../assets/App.css"
 import { useForm } from 'react-hook-form';
 import { API_URL } from '../service/config';
+import { post } from '../service/axios';
 
 const Userverify = () => {
   const { handleSubmit, register, formState: { errors } } = useForm()
@@ -29,23 +29,19 @@ const Userverify = () => {
   };
   const navigate = useNavigate();
   const handlesubmit = async (e) => {
-    try {
-      const formData = new FormData();
-      formData.append("image", info.image);
-      formData.append("address", info.address);
-      formData.append("contactNumber", info.contactNumber);
-      const response = await axios.post(API_URL+"/addUserDetails", formData, {
-        headers: {
-          token: token
-        }
-      });
-      console.log('data uploaded:', response.data);
-      toast.success('data uploaded successfully!');
+    const formData = new FormData();
+    formData.append("image", info.image);
+    const image=await post(API_URL +"/addUserImage",formData);
+    await post(API_URL + "/addUserDetails", { image:image.data, address: info.address, contactNumber: info.contactNumber }, {
+      headers: {
+        authorization: token
+      }
+    }).then(() => {
       navigate("/user/main")
-    } catch (error) {
-      toast.error((Object.values(error.response.data).toString()))
-      console.error('Error submitting the form', (Object.values(error.response.data).toString()));
-    }
+    })
+      .catch((error) => {
+        toast.error((Object.values(error.response.data).toString()))
+      })
   }
   return (
     <div className="min-h-screen w-screen bg-gradient-to-br from-blue-100 via-purple-200 to-purple-500 flex justify-center items-center">

@@ -1,9 +1,9 @@
 import { React, useEffect, useState } from 'react'
-import { toast} from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import "../../assets/userform.css";
 import { API_URL } from '../../service/config';
+import { get, post } from '../../service/axios';
 
 const AppointmentForm = () => {
     const [info, setinfo] = useState({
@@ -23,28 +23,31 @@ const AppointmentForm = () => {
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
     const getdata = async () => {
-        const result = await axios.get(API_URL+"/doctorList");
-        setlist(result.data)
+        const result = await get(API_URL + "/doctorList")
+            .then((result) => {
+                setlist(result.data)
+            })
+            .catch((error) => {
+                toast.error(Object.values(error.response.data).toString());
+            })
     }
     useEffect(() => {
-            getdata();
+        getdata();
     }, []);
     const handlesubmit = async (e) => {
         e.preventDefault();
-        try {
-            const response = await axios.post(API_URL+"/addAppointment", {
-                date: info.date,
-                reason: info.reason,
-                doctor: info.doctor
-            },
-                { headers: { token: token } });
-            console.log('User saved:', response.data);
-            toast.success('User register successfully!');
-            navigate("/user/showappointent");
-        } catch (error) {
-            toast.error(Object.values(error.response.data).toString());
-            console.error(Object.values(error.response.data).toString());
-        }
+        await post(API_URL + "/addAppointment", {
+            date: info.date,
+            reason: info.reason,
+            doctor: info.doctor
+        },
+            { headers: { authorization: token } })
+            .then(() => {
+                navigate("/user/showappointent");
+            })
+            .catch((error) => {
+                toast.error(Object.values(error.response.data).toString());
+            })
     }
     return (
         <div>

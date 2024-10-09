@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API_URL } from '../../service/config';
 import { decryptData } from '../../service/decrypt';
+import { get } from '../../service/axios';
+import { Logout } from '../../common/data';
 
 const DoctorProfile = () => {
     const navigate = useNavigate();
@@ -12,32 +14,24 @@ const DoctorProfile = () => {
         email: "",
         qualification: "",
         about: "",
-        image:"",
+        image: "",
     });
     const token = localStorage.getItem("token");
     useEffect(() => {
-            getData()
+        getData()
     }, []);
 
     const getData = async () => {
-        const result = await axios.get(API_URL+"/doctorDetails", { headers: { token:token } });
-        const decryptedData = await decryptData(result.data.mac, result.data.value);
-        setInfo(decryptedData.data);
+        const result = await get(API_URL + "/doctorDetails", { headers: { authorization: token } });
+        setInfo(result.data);
     };
-    const logout = async (e) => {
-        e.preventDefault();
-        const result = await axios.get(API_URL+"/userLogout", { headers: { token:token } });
-        localStorage.removeItem("token");
-        localStorage.removeItem("type");
-        navigate("/Login")
-    }
     return (
         <div className="bg-gradient-to-br from-indigo-200 to-blue-100 min-h-screen p-8 font-serif">
             <nav className="bg-white shadow-lg rounded-lg p-4 mb-8">
                 <div className="flex justify-between items-center">
                     <h1 className="text-2xl font-bold text-gray-800">Doctor Profile</h1>
                     <div className="flex space-x-6">
-                        <button onClick={logout} className="logout-btn">
+                        <button onClick={() => Logout("/doctorLogout", token)} className="logout-btn">
                             <i className="fas fa-sign-out-alt"></i> Log Out
                         </button>
                     </div>
@@ -77,7 +71,7 @@ const DoctorProfile = () => {
                 </button>
                 <button onClick={() => navigate("/doctor/profileupdate")}
                     className="bg-gradient-to-r from-green-500 to-lime-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-green-600 hover:to-lime-600 transition duration-300 transform hover:scale-105">
-                     <i className="fas fa-list"></i> Update Profile
+                    <i className="fas fa-list"></i> Update Profile
                 </button>
             </div>
 

@@ -1,10 +1,11 @@
 import { React, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import {toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { API_URL } from '../../service/config';
-import { decryptData } from '../../service/decrypt';
+import { get, patch } from '../../service/axios';
+import { Userdata } from '../../common/data';
 
 const Userprofileupdate = () => {
     const token = localStorage.getItem("token");
@@ -19,22 +20,9 @@ const Userprofileupdate = () => {
         fullName: "",
         email: "",
         contactNumber: "",
-        address:"",
-      })
-    const getdata = async () => {
-        try {
-          const result = await axios.get(API_URL+"/getUserDetails", { headers: { token: token } });
-          const decryptdata = await decryptData(result.data.mac, result.data.value)
-          setuserinfo(decryptdata.data); 
-        } catch (error) {
-          if(error.response.status===401){
-            navigate("/Login")
-          }      
-        }
-      }
-      useEffect(()=>{
-        getdata();
-      },[])
+        address: "",
+    })
+    Userdata(setuserinfo,token)
     const handleInputChange = (event) => {
         event.preventDefault();
         const { name, value } = event.target;
@@ -45,24 +33,20 @@ const Userprofileupdate = () => {
     };
     const navigate = useNavigate();
     const handlesubmit = async (e) => {
-        try {
-            const response = await axios.patch(API_URL+"/updateUserProfile", {
+             await axios.patch(API_URL + "/updateUserProfile", {
                 fullName: info.fullName,
                 contactNumber: info.contactNumber,
                 email: info.email,
                 address: info.address
             }, {
                 headers: {
-                    token: token
+                    authorization: token
                 }
-            });
-            console.log('data uploaded:', response.data);
-            toast.success('data uploaded successfully!');
-            navigate("/user/main")
-        } catch (error) {
-            toast.error((Object.values(error.response.data).toString()))
-            console.error('Error submitting the form', (Object.values(error.response.data).toString()));
-        }
+            }).then(()=>{
+                navigate("/user/main")
+            }).catch((error)=>{
+                toast.error((Object.values(error.response.data).toString()))
+            })
     }
     return (
         <div className="min-h-screen w-screen bg-white flex items-center justify-center p-6 relative">
@@ -77,13 +61,13 @@ const Userprofileupdate = () => {
                         <div className="relative">
                             <label className="block text-lg font-medium text-gray-700 mb-3" htmlFor="full_name">Full Name</label>
                             <input type="text"
-                                {...register("fullName", { required: "fullName is required", pattern: { value: /^[a-zA-Z ]+$/, message: "fullName is not valid" } })} name="fullName" id="full_name" onChange={handleInputChange} className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder={userinfo.fullName}></input>
+                                {...register("fullName", { pattern: { value: /^[a-zA-Z ]{5,25}$/, message: "fullName is not valid" } })} name="fullName" id="full_name" onChange={handleInputChange} className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder={userinfo.fullName}></input>
                             {errors.fullName && <span className="text-red-500 text-sm">{errors.fullName.message}</span>}
                         </div>
                         <div className="relative">
                             <label className="block text-lg font-medium text-gray-700 mb-3" htmlFor="email">Email</label>
                             <input type="email"
-                                {...register("email", { required: "Email is required", pattern: { value: /^\S+@\S+$/i, message: "Email is not valid" } })} onChange={handleInputChange} name="email" id="email" className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-purple-500 focus:outline-none focus:border-purple-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder={userinfo.email} ></input>
+                                {...register("email", {pattern: { value: /^[a-zA-Z0-9.]+@[a-z]+.[a-z]+$/, message: "Email is not valid" } })} onChange={handleInputChange} name="email" id="email" className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-purple-500 focus:outline-none focus:border-purple-500 transition-all duration-300 hover:shadow-lg hover:scale-105"placeholder={userinfo.email} ></input>
                             {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
                         </div>
                     </div>
@@ -92,13 +76,13 @@ const Userprofileupdate = () => {
                         <div className="relative">
                             <label className="block text-lg font-medium text-gray-700 mb-3" htmlFor="phone">Phone Number</label>
                             <input type="tel"
-                                {...register("contactNumber", { required: "contactNumber is required", pattern: { value: /^[0-9]{10}$/, message: "Invalid contactNumber" } })} onChange={handleInputChange} name="contactNumber" id="phone" className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-green-500 focus:outline-none focus:border-green-500 transition-all duration-300 hover:shadow-lg" placeholder={userinfo.contactNumber} ></input>
+                                {...register("contactNumber", { pattern: { value: /^[0-9]{10}$/, message: "Invalid contactNumber" } })} onChange={handleInputChange} name="contactNumber" id="phone" className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-green-500 focus:outline-none focus:border-green-500 transition-all duration-300 hover:shadow-lg" placeholder={userinfo.contactNumber} ></input>
                             {errors.contactNumber && <span className="text-red-500 text-sm">{errors.contactNumber.message}</span>}
                         </div>
 
                         <div className="relative">
                             <label className="block text-lg font-medium text-gray-700 mb-3" htmlFor="address">Address</label>
-                            <input type="text"{...register("address", { required: "address is required", pattern: { value: /^[a-zA-Z0-9- ]+$/, message: "Invalid address" } })}
+                            <input type="text"{...register("address", {pattern: { value: /^[a-zA-Z0-9 ,._-]{5,50}$/, message: "Invalid address" } })}
                                 onChange={handleInputChange} name="address" id="address"
                                 className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-yellow-500 focus:outline-none focus:border-yellow-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder={userinfo.address}></input>
                             {errors.address && <span className="text-red-500 text-sm">{errors.address.message}</span>}

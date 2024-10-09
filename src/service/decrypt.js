@@ -1,10 +1,14 @@
-import axios from "axios";
-import { API_URL } from "./config";
-export const decryptData = async (mac, value) => {
-    try {
-      const response = await axios.post(API_URL+"/DecryptData", { mac, value });
-      return response
-    } catch (error) {
-      console.error('Error submitting the form', error);
+import Security from "../security/security";
+
+export const decryptData = async (response) => {  
+  try {
+    if (response.data.mac !== undefined) {      
+      response.data = await new Security().decrypt(response);
+      console.log("response",response.data);
+      return response.data;
     }
-  };
+    return response;
+  } catch (error) {
+    console.error(error)
+  }
+}

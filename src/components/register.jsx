@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { API_URL } from '../service/config';
+import { post } from '../service/axios';
 
 const Register = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -16,7 +16,7 @@ const Register = () => {
     password: '',
     type: '',
   });
-  const [showPassword, setShowPassword] = useState(false); 
+  const [showPassword, setShowPassword] = useState(true); 
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -38,27 +38,18 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handlesubmit = async (e) => {
-    try {
-      const response = await axios.post(API_URL+'/userRegister', {
+      await post(API_URL+'/userRegister', {
         fullName: info.fullName,
         email: info.email,
         password: info.password,
         type: info.type,
-      });
-      console.log('User saved:', response.data);
-      toast.success('User registered successfully!');
-      navigate('/login');
-    } catch (error) {
-      toast.error((Object.values(error.response.data).toString()));
-      console.error('Error submitting the form', (Object.values(error.response.data).toString()));
-    }
+      }).then(()=>{
+        navigate('/login');
+      })
+      .catch((error)=>{
+        toast.error((Object.values(error.response.data).toString()));
+      })
   };
-
-  const redirect = (e) => {
-    e.preventDefault();
-    navigate('/login');
-  };
-
   return (
     <div className="min-h-100vh flex items-center justify-center bg-gradient-to-br from-purple-500 to-blue-600 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 p-10 bg-white shadow-2xl rounded-lg animate-fadeIn">
@@ -88,8 +79,8 @@ const Register = () => {
             </div>
             <div className="relative">
               <input
-                type={showPassword ? 'text' : 'password'} 
-                {...register("password", { required: "Password is required", minLength: { value: 6, message: "Password must be at least 6 characters" } })}
+                type={showPassword ? 'password' : 'text'} 
+                {...register("password", { required: "Password is required", minLength: { value: 6, message: "Password must be at least 6 characters" } ,pattern:{value:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,message:"passsword format is invalid"}})}
                 name="password"
                 onChange={handleInputChange}
                 className="appearance-none rounded-md w-full py-3 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -127,7 +118,7 @@ const Register = () => {
         <div className="text-center mt-6">
           <p className="text-gray-600">Already have an account?
             <span
-              onClick={redirect}
+              onClick={()=>navigate("/login")}
               className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
             >
               Login now

@@ -4,7 +4,9 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 import { API_URL } from '../../service/config';
-
+import { get } from '../../service/axios';
+import { categorizeAppointments } from '../../common/data';
+import { Getdata } from '../../common/data';
 const Appointmentpending = () => {
   const navigate = useNavigate();
   const [info, setInfo] = useState([]);
@@ -17,22 +19,16 @@ const Appointmentpending = () => {
     const format = dayjs(value).format("DD-MM-YYYY")
     filteredDate((date) => ({ ...date, [name]: format }));
   };
-  useEffect(() => {
-      getData();
-  }, []);
-  const getData = async () => {
-    const result = await axios.get(API_URL + "/appointmentList", { headers: { token: token, status: 0 } });
-    setInfo(result.data);
-  };
-
+  Getdata(setInfo, token);  
   const postResult = async (appointmentId, response) => {
-    try {
-      const result = await axios.post(API_URL + "/confirmAppointment", { appointmentId: appointmentId, response: response }, { headers: { token: token } });
-      toast.success('appointment updated successfully!');
-      getData();
-    } catch (error) {
-      toast.error((Object.values(error.response.data).toString()));
-    }
+    await axios.post(API_URL + "/confirmAppointment", { appointmentId: appointmentId, response: response }, { headers: { authorization: token } })
+      .then(() => {
+        toast.success('appointment updated successfully!');
+        Getdata(setInfo, token); 
+      })
+      .catch(() => {
+        toast.error("cannot post result")
+      })
   }
   const filter = (date) => {
     const filtered = info.filter((user) => user.date === date);
@@ -55,8 +51,8 @@ const Appointmentpending = () => {
 
       <div className="container mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {info.length > 0 ? (
-            info.map((user) => (
+          {categorizeAppointments(info,0).length > 0 ? (
+            categorizeAppointments(info,0).map((user) => (
               <div
                 key={user._id}
                 className="bg-white rounded-lg shadow-lg p-8 transition-transform transform hover:scale-105 hover:shadow-2xl duration-300 border-l-4 border-purple-500"

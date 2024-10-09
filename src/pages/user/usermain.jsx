@@ -1,72 +1,51 @@
 import { React, useState, useEffect } from 'react'
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import "../../assets/usermain.css"
-import axios from 'axios';
 import { API_URL } from '../../service/config';
-import { decryptData } from '../../service/decrypt';
+import { get } from '../../service/axios';
+import { Logout, Userdata } from '../../common/data';
 
 const Usermain = () => {
   const [info, setinfo] = useState({
     fullName: "",
     email: "",
     contactNumber: "",
-    image:"",
+    image: "",
   })
-  const navigate=useNavigate()
+  const navigate = useNavigate()
   const token = localStorage.getItem("token");
-  useEffect(()=>{
-      getdata()
-  },[]);
-  const getdata = async () => {
-    try {
-      const result = await axios.get(API_URL+"/getUserDetails", { headers: { token: token } });
-      const decryptdata = await decryptData(result.data.mac, result.data.value)
-      setinfo(decryptdata.data); 
-    } catch (error) {
-      if(error.response.status===401){
-        navigate("/Login")
-      }      
-    }
-  }
-  const logout=async(e)=>{
-    e.preventDefault();
-     await axios.get(API_URL+"/userLogout", { headers: { token:token } });
-    localStorage.removeItem("token");
-    localStorage.removeItem("type");
-    navigate("/Login")
-  }
-  const url=API_URL+`/uploads/userProfile/${info.image}`
+  Userdata(setinfo, token)
   return (
     <div>
       <div className="container">
         <h1 className="title">Welcome to Your Dashboard</h1>
         <div className="user-info">
           <div className="user-avatar">
-            <img src={url} alt="User"></img>
+            <img src={API_URL + `/uploads/userProfile/${info.image}.png`} alt="User"></img>
           </div>
           <div className="user-details">
             <h2>Name:{info.fullName.toUpperCase()}</h2>
             <p>Email:{info.email.toUpperCase()}</p>
             <p>Number:{info.contactNumber}</p>
           </div>
-          <button onClick={logout}className="logout-btn">
+          <button onClick={() => Logout("/userLogout", token)} className="logout-btn">
             <i className="fas fa-sign-out-alt"></i> Log Out
           </button>
         </div>
         <div className="btn-group">
-          <button className="btn btn-appointment" onClick={()=>navigate("/user/appointmentform")}>
+          <button className="btn btn-appointment" onClick={() => navigate("/user/appointmentform")}>
             <i className="fas fa-calendar"></i> Book Appointment
           </button>
-          <button className="btn btn-appointment" onClick={()=>navigate("/user/showappointent")}>
+          <button className="btn btn-appointment" onClick={() => navigate("/user/showappointent")}>
             <i className="fas fa-list-alt"></i>Show Appointment
           </button>
-          <button className="btn btn-appointment" onClick={()=>navigate("/user/finddoctor")}>
+          <button className="btn btn-appointment" onClick={() => navigate("/user/finddoctor")}>
             <i className="fas fa-user-md"></i> Find A Doctor
           </button>
-          <button className="btn btn-appointment" onClick={()=>navigate("/user/medicalrecords")}>
+          <button className="btn btn-appointment" onClick={() => navigate("/user/medicalrecords")}>
             <i className="fas fa-file-medical-alt"></i> Medical Records
           </button>
-          <button className="btn btn-appointment" onClick={()=>navigate("/user/profileupdate")}>
+          <button className="btn btn-appointment" onClick={() => navigate("/user/profileupdate")}>
             <i className="fas fa-file-medical-alt"></i> Update Profile
           </button>
         </div>

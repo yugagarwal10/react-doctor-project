@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import {useNavigate} from 'react-router-dom';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import "../assets/App.css"
 import { API_URL } from '../service/config';
-import { decryptData } from '../service/decrypt';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { post } from '../service/axios';
 
 
 const Login = () => {
@@ -16,12 +15,12 @@ const Login = () => {
     email: "",
     password: ""
   });
-  const [showPassword,setShowPassword]=useState(false);
-  const togglePasswordVisibility=()=>{
-    if(showPassword===false){
+  const [showPassword, setShowPassword] = useState(true);
+  const togglePasswordVisibility = () => {
+    if (showPassword === false) {
       setShowPassword(true)
     }
-    else{
+    else {
       setShowPassword(false)
     }
   }
@@ -36,40 +35,32 @@ const Login = () => {
   };
   const navigate = useNavigate();
   const handlesubmit = async (e) => {
-    try {
-      const response = await axios.post(API_URL+"/userLogin", {
-        email: info.email,
-        password: info.password
-      });
-      const data = await decryptData(response.data.mac, response.data.value)
-      console.log('login successfully:', response);
-      toast.success('User login successfully!');
-      localStorage.setItem("token", data.data.token)
-      localStorage.setItem("type", data.data.type)
-      const type = data.data.type;
-      const Doctorverify = data.data.isverify;
-      const userverify = data.data.isverify;
-
-      if (type === "doctor") {
-        if (Doctorverify === 1) {
+    await post(API_URL + "/userLogin", {
+      email: info.email,
+      password: info.password
+    }).then((response) => {     
+      localStorage.setItem("token", `bearer ` + response.data.token)
+      localStorage.setItem("type", response.data.type);
+      if (response.data.type === "doctor") {
+        if (response.data.isverify === 1) {
           navigate("/doctor/profile")
         }
         else {
           navigate("/doctor/verify")
         }
       }
-      if (type === "user") {
-        if (userverify === 1) {
+      if (response.data.type === "user") {
+        if (response.data.isverify === 1) {
           navigate("/user/main")
         }
         else {
           navigate("/user/verify")
         }
       }
-    } catch (error) {
-      toast.error((Object.values(error.response.data).toString()))
-      console.error('Error submitting the form', (Object.values(error.response.data).toString()));
-    }
+    })
+      .catch((error) => {
+        toast.error((Object.values(error.response.data).toString()))
+      })
   }
   return (
     <div className="min-h-100vh  flex items-center justify-center bg-gradient-to-br from-purple-500 to-blue-600 py-12 px-4 sm:px-6 lg:px-8">
@@ -89,14 +80,14 @@ const Login = () => {
             </div>
             <div className="relative">
               <input
-                type={showPassword ? 'password':'text'}
+                type={showPassword ? 'password' : 'text'}
                 {...register("password", { required: "Password is required", minLength: { value: 5, message: "Password must be at least 6 characters" } })}
                 name="password"
                 onChange={handleInputChange}
                 className="appearance-none rounded-md w-full py-3 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Password"
               />
-               <span
+              <span
                 className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
                 onClick={togglePasswordVisibility}
               >
@@ -116,7 +107,7 @@ const Login = () => {
         </form>
         <div className="text-center mt-6">
           <p className="text-gray-600">Dont have an account?
-            <span onClick={()=>navigate("/")}
+            <span onClick={() => navigate("/")}
               className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
             >
               Register now

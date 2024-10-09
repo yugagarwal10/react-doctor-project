@@ -4,27 +4,22 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'react-toastify';
 import { API_URL } from '../../service/config';
+import { categorizeAppointments } from '../../common/data';
+import { Getdata } from '../../common/data';
 
 const Showappointent = () => {
     const navigate = useNavigate();
     const [info, setinfo] = useState([]);
     const token = localStorage.getItem("token");
-    const getdata = async (event) => {
-        const result = await axios.get(API_URL + "/appointmentList", { headers: { token: token, status: 0 } });
-        setinfo(result.data);
-    }
-    useEffect(() => {
-        getdata()
-    }, []);
-    const handleDelete = async (id) => {
-        try {
-            await axios.delete(API_URL + `/deleAppointment?id=${id}`, { headers: { token: token } })
-            toast.success('deleted successfully!');
-            getdata()
-        } catch (error) {
-            toast.error((Object.values(error.response.data).toString()))
-            console.error('Error submitting the form', (Object.values(error.response.data).toString()));
-        }
+    Getdata(setinfo, token)
+    const HandleDelete = async (id) => {
+        await axios.delete(API_URL + `/deleAppointment?id=${id}`, { headers: { authorization: token } })
+            .then(() => {
+                toast.success('deleted successfully!');
+            })
+            .catch((error) => {
+                toast.error((Object.values(error.response.data).toString()))
+            })
     }
     return (
         <div>
@@ -36,8 +31,8 @@ const Showappointent = () => {
                     <h1 class="text-5xl font-extrabold text-blue-700 mb-8 fade-in drop-shadow-lg">Your Booked Appointments</h1>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full fade-in">
-                        {info.length > 0 ? (
-                            info.map((user) => (
+                        {categorizeAppointments(info, 0).length > 0 ? (
+                            categorizeAppointments(info, 0).map((user) => (
                                 <div class="bg-white p-8 rounded-2xl shadow-lg transform hover:-translate-y-3 transition duration-300 hover-glow relative">
                                     <div class="absolute -top-8 -left-8 bg-blue-500 rounded-full p-4">
                                         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7-7-7m14-5l-7 7-7-7"></path></svg>
@@ -47,7 +42,7 @@ const Showappointent = () => {
                                     <p class="text-gray-500 mb-2">Time: <span class="font-semibold">{user.time}</span></p>
                                     <p class="text-gray-500 mb-4">reason:{user.reason}</p>
                                     <div class="flex space-x-4">
-                                        <button onClick={() => handleDelete(user._id)} class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300">
+                                        <button onClick={() => HandleDelete(user._id)} class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300">
                                             Cancel
                                         </button>
                                     </div>

@@ -5,16 +5,17 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { API_URL } from '../../service/config';
 import { decryptData } from '../../service/decrypt';
+import { get } from '../../service/axios';
 
 const Doctorprofileupdate = () => {
     const { handleSubmit, register, formState: { errors } } = useForm()
     const [info, setinfo] = useState({
-        fullName: "",
-        about: "",
-        qualification: "",
-        email: "",
-        endShiftTime:"",
-        startShiftTime:""
+        fullName: doctor.fullName,
+        about: doctor.about,
+        qualification: doctor.qualification,
+        email: doctor.email,
+        endShiftTime:doctor.endShiftTime,
+        startShiftTime:doctor.startShiftTime,
     })
 
     const token = localStorage.getItem("token");
@@ -25,14 +26,16 @@ const Doctorprofileupdate = () => {
         qualification: "",
         about: "",
         image:"",
+        endShiftTime:"",
+        startShiftTime:""
+
     });
     useEffect(() => {
             getData();
     }, []);
     const getData = async () => {
-        const result = await axios.get(API_URL+"/doctorDetails", { headers: { token:token } });
-        const decryptedData = await decryptData(result.data.mac, result.data.value);
-        setDoctor(decryptedData.data);
+        const result = await get(API_URL+"/doctorDetails", { headers: { authorization:token } });
+        setDoctor(result.data);
     };
     const handleInputChange = (event) => {
         event.preventDefault();
@@ -44,7 +47,6 @@ const Doctorprofileupdate = () => {
     };
     const navigate = useNavigate();
     const handlesubmit = async (e) => {
-        try {
             const response = await axios.patch(API_URL+"/updateDoctorProfile", {
                 fullName: info.fullName,
                 about: info.about,
@@ -54,18 +56,15 @@ const Doctorprofileupdate = () => {
                 qualification: info.qualification
             }, {
                 headers: {
-                    token: token
+                    authorization: token
                 }
-            });
-            console.log('data uploaded:', response.data);
-            toast.success('data uploaded successfully!');
-            navigate("/doctor/profile")
-        } catch (error) {
-            toast.error((Object.values(error.response.data).toString()))
-            console.error('Error submitting the form', (Object.values(error.response.data).toString()));
-            console.log(error);
-            
-        }
+            })
+            .then(()=>{
+                navigate("/doctor/profile")
+            })
+            .catch((error)=>{
+                toast.error((Object.values(error.response.data).toString()))      
+            })
     }
     return (
         <div className="min-h-screen w-screen bg-white flex items-center justify-center p-6 relative">
