@@ -111,27 +111,24 @@ const AppRoutes = () => {
         },
     ]
     return (
-        <div>
-            <Routes>
-                {routes.map((index, route) => {
-                    if (index.auth === true) {
-                        return (
-                            <Route key={route} path={index.path}
-                                element={<ProtectedRoutes allowedRoles={index.allowedRoles}>{index.component}
-                                </ProtectedRoutes>}
-                            />
-                        )
-                    }
-                    else {
-                        return (
-                            <Route key={route} path={index.path}
-                                element={index.component}
-                            />
-                        )
-                    }
-                })}
-            </Routes>
-        </div>
+        <Routes>
+            {routes.map((index, route) => {
+                if (index.auth === true) {
+                    return (
+                        <Route element={<ProtectedRoutes allowedRoles={index.allowedRoles}/>}>
+                            <Route key={route} path={index.path} element={index.component} />
+                        </Route>
+                    )
+                }
+                else {
+                    return (
+                        <Route key={route} path={index.path}
+                            element={index.component}
+                        />
+                    )
+                }
+            })}
+        </Routes>
     )
 }
 export default AppRoutes

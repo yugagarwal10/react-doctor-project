@@ -22,6 +22,7 @@ const Userprofileupdate = () => {
         address: "",
     })
     Userdata(setuserinfo,token)
+    Userdata(setinfo,token)
     const handleInputChange = (event) => {
         event.preventDefault();
         const { name, value } = event.target;

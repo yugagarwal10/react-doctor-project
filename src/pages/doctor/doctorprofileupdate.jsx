@@ -9,16 +9,6 @@ import { get } from '../../service/axios';
 
 const Doctorprofileupdate = () => {
     const { handleSubmit, register, formState: { errors } } = useForm()
-    const [info, setinfo] = useState({
-        fullName: doctor.fullName,
-        about: doctor.about,
-        qualification: doctor.qualification,
-        email: doctor.email,
-        endShiftTime:doctor.endShiftTime,
-        startShiftTime:doctor.startShiftTime,
-    })
-
-    const token = localStorage.getItem("token");
     const [doctor, setDoctor] = useState({
         fullName: "",
         expertise: [],
@@ -30,6 +20,16 @@ const Doctorprofileupdate = () => {
         startShiftTime:""
 
     });
+    const [info, setinfo] = useState({
+        fullName: doctor.fullName,
+        about: doctor.about,
+        qualification: doctor.qualification,
+        email: doctor.email,
+        endShiftTime:doctor.endShiftTime,
+        startShiftTime:doctor.startShiftTime,
+    })
+
+    const token = localStorage.getItem("token");
     useEffect(() => {
             getData();
     }, []);
@@ -110,7 +110,7 @@ const Doctorprofileupdate = () => {
                         <div className="relative">
                             <label className="block text-lg font-medium text-gray-700 mb-3" htmlFor="full_name">Qualification</label>
                             <input type="text"
-                                {...register("qualification", { required: "qualification is required", pattern: { value: /^[a-zA-Z ]+$/, message: "qualification is not valid" } })} name="qualification" id="full_name" onChange={handleInputChange} className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder={doctor.expertise}></input>
+                                {...register("qualification", { required: "qualification is required", pattern: { value: /^[a-zA-Z ]+$/, message: "qualification is not valid" } })} name="qualification" id="full_name" onChange={handleInputChange} className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder={doctor.qualification}></input>
                             {errors.qualification && <span className="text-red-500 text-sm">{errors.qualification.message}</span>}
                         </div>
                         <div className="relative">

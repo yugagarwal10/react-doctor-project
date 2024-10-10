@@ -19,12 +19,11 @@ const Appointmentpending = () => {
     const format = dayjs(value).format("DD-MM-YYYY")
     filteredDate((date) => ({ ...date, [name]: format }));
   };
-  Getdata(setInfo, token);  
+  Getdata(setInfo, token);   
   const postResult = async (appointmentId, response) => {
     await axios.post(API_URL + "/confirmAppointment", { appointmentId: appointmentId, response: response }, { headers: { authorization: token } })
       .then(() => {
         toast.success('appointment updated successfully!');
-        Getdata(setInfo, token); 
       })
       .catch(() => {
         toast.error("cannot post result")
@@ -39,7 +38,7 @@ const Appointmentpending = () => {
       <nav className="bg-white shadow-lg rounded-lg p-4 mb-8 transition-transform transform hover:scale-105 duration-300">
         <h2 className="text-4xl font-bold text-center text-purple-600 mb-2">Upcoming Appointments</h2>
         <p className="text-2xl font-bold text-center text-gray-800 animate-pulse">Doctor Dashboard</p>
-        <p className="text-2xl font-bold text-center text-gray-800 animate-pulse">Total-Appointments : {info.length}</p>
+        <p className="text-2xl font-bold text-center text-gray-800 animate-pulse">Total-Appointments : {categorizeAppointments(info,0).length}</p>
       </nav>
 
       <div className="bg-white rounded-lg shadow-lg p-6 mb-8 transition-transform transform hover:scale-105 duration-300 d-flex">
@@ -48,7 +47,6 @@ const Appointmentpending = () => {
           Filter Appointment
         </button>
       </div>
-
       <div className="container mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {categorizeAppointments(info,0).length > 0 ? (
