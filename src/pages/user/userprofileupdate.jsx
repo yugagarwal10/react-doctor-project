@@ -1,10 +1,9 @@
-import { React, useState, useEffect } from 'react'
+import { React, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { API_URL } from '../../service/config';
-import { get, patch } from '../../service/axios';
 import { Userdata } from '../../common/data';
 
 const Userprofileupdate = () => {

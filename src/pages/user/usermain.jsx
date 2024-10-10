@@ -1,8 +1,7 @@
-import { React, useState, useEffect } from 'react'
+import { React, useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import "../../assets/usermain.css"
 import { API_URL } from '../../service/config';
-import { get } from '../../service/axios';
 import { Logout, Userdata } from '../../common/data';
 
 const Usermain = () => {
@@ -15,6 +14,10 @@ const Usermain = () => {
   const navigate = useNavigate()
   const token = localStorage.getItem("token");
   Userdata(setinfo, token)
+  const logout=()=>{
+    Logout("/userLogout", token);
+    navigate("/Login")
+  }
   return (
     <div>
       <div className="container">
@@ -28,7 +31,7 @@ const Usermain = () => {
             <p>Email:{info.email.toUpperCase()}</p>
             <p>Number:{info.contactNumber}</p>
           </div>
-          <button onClick={() => Logout("/userLogout", token)} className="logout-btn">
+          <button onClick={logout} className="logout-btn">
             <i className="fas fa-sign-out-alt"></i> Log Out
           </button>
         </div>

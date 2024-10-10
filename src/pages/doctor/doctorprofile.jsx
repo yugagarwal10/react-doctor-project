@@ -1,8 +1,6 @@
 import { React, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { API_URL } from '../../service/config';
-import { decryptData } from '../../service/decrypt';
 import { get } from '../../service/axios';
 import { Logout } from '../../common/data';
 
@@ -17,21 +15,25 @@ const DoctorProfile = () => {
         image: "",
     });
     const token = localStorage.getItem("token");
-    useEffect(() => {
-        getData()
-    }, []);
-
     const getData = async () => {
         const result = await get(API_URL + "/doctorDetails", { headers: { authorization: token } });
         setInfo(result.data);
     };
+    useEffect(() => {
+        getData()
+    }, []);
+
+    const logout=()=>{
+        Logout("/doctorLogout", token)
+        navigate("/Login")
+    }
     return (
         <div className="bg-gradient-to-br from-indigo-200 to-blue-100 min-h-screen p-8 font-serif">
             <nav className="bg-white shadow-lg rounded-lg p-4 mb-8">
                 <div className="flex justify-between items-center">
                     <h1 className="text-2xl font-bold text-gray-800">Doctor Profile</h1>
                     <div className="flex space-x-6">
-                        <button onClick={() => Logout("/doctorLogout", token)} className="logout-btn">
+                        <button onClick={logout} className="logout-btn">
                             <i className="fas fa-sign-out-alt"></i> Log Out
                         </button>
                     </div>

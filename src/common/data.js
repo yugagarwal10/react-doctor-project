@@ -2,7 +2,6 @@ import { API_URL } from "../service/config";
 import { get } from "../service/axios";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 export const Getdata = async (setInfo, token) => {
     const getData = async() => {
         await get(API_URL + "/fullAppointmentList", { headers: { authorization: token } })
@@ -22,12 +21,10 @@ export const categorizeAppointments = (info,status) => {
     return info.filter((user) => user.status === status);
 };
 export const Logout = async (url,token) => {
-    const navigate=useNavigate();
     await get(API_URL + url, { headers: { authorization: token } })
       .then(() => {
         localStorage.removeItem("token");
         localStorage.removeItem("type");
-        navigate("/Login")
       })
       .catch((err) => {
         console.log("errrorrr");
