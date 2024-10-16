@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faClipboardList, faCheckCircle, faTimesCircle, faHourglassHalf, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { categorizeAppointments } from '../../common/data';
-import { Getdata } from '../../common/data';
+import { categorizeAppointments, Getdata } from '../../common/data';
+import { useSelector } from 'react-redux';
 
 const Medicalrecords = () => {
   const navigate = useNavigate();
-  const [info, setInfo] = useState([]);
-  const token = localStorage.getItem("token");
-  Getdata(setInfo, token)
+  Getdata()
+ const info=useSelector(state=>state.value);
 
   return (
     <div className="bg-gradient-to-br from-blue-50 to-purple-100 min-h-screen p-6 font-serif">

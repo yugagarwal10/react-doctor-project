@@ -5,6 +5,7 @@ import "../assets/App.css"
 import { useForm } from 'react-hook-form';
 import { API_URL } from '../service/config';
 import { post } from '../service/axios';
+import axios from 'axios';
 
 const Userverify = () => {
   const { handleSubmit, register, formState: { errors } } = useForm()
@@ -31,8 +32,8 @@ const Userverify = () => {
   const handlesubmit = async (e) => {
     const formData = new FormData();
     formData.append("image", info.image);
-    const image=await post(API_URL +"/addUserImage",formData);
-    await post(API_URL + "/addUserDetails", { image:image.data, address: info.address, contactNumber: info.contactNumber }, {
+    const image=await axios.post(API_URL +"/addUserImage",formData);
+    await post(API_URL + "/addUserDetails", { image:image, address: info.address, contactNumber: info.contactNumber }, {
       headers: {
         authorization: token
       }

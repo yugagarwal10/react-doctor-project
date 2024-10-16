@@ -2,45 +2,50 @@ import { API_URL } from "../service/config";
 import { get } from "../service/axios";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
-export const Getdata = async (setInfo, token) => {
-    const getData = async() => {
-        await get(API_URL + "/fullAppointmentList", { headers: { authorization: token } })
-        .then((res) => {
-            setInfo(res.data);
-        })
-        .catch((error) => {
-            console.log(error);
-            toast.error("error fetching information")
-        })
+import { useDispatch } from "react-redux";
+import { setAppointment } from "../redux/slice";
+import axios from "axios";
+const token=localStorage.getItem("token");
+export const Getdata = async () => {
+    const dispatch = useDispatch()
+    const getData = async () => {
+        await axios.get(API_URL + "/fullAppointmentList", { headers: { authorization: token } })
+            .then((res) => {
+                dispatch(setAppointment(res))
+            })
+            .catch((error) => {
+                console.log(error, "user-details");
+                toast.error("error fetching information")
+            })
     };
     useEffect(() => {
         getData();
     }, [])
 }
-export const categorizeAppointments = (info,status) => {
+export const categorizeAppointments = (info, status) => {
     return info.filter((user) => user.status === status);
 };
-export const Logout = async (url,token) => {
-    await get(API_URL + url, { headers: { authorization: token } })
-      .then(() => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("type");
-      })
-      .catch((err) => {
-        console.log("errrorrr");
-      })
-  }
-  export const Userdata=(setuserinfo,token)=>{
+export const Logout = async (url) => {
+    await axios.get(API_URL + url, { headers: { authorization: token } })
+        .then(() => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("type");
+        })
+        .catch((err) => {
+            console.log("errrorrr");
+        })
+}
+export const Userdata = (setuserinfo) => {
     const getdata = async () => {
-        await get(API_URL + "/getUserDetails", { headers: { authorization: token } })
-            .then((result) => {                          
-                setuserinfo(result.data);
+        await axios.get(API_URL + "/getUserDetails", { headers: { authorization: token } })
+            .then((result) => {
+                setuserinfo(result);
             })
-            .catch(()=>{
-                console.log("errror");
+            .catch((error) => {
+                console.log(error);
             })
     }
     useEffect(() => {
         getdata();
     }, [])
-  }
+}

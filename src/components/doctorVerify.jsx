@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
 import { API_URL } from '../service/config';
 import { post } from '../service/axios';
+import axios from 'axios';
 
 const Doctor = () => {
   const { handleSubmit, register, formState: { errors } } = useForm();
@@ -32,9 +33,9 @@ const Doctor = () => {
   const handlesubmit = async (event) => {
     const formData = new FormData();
     formData.append("image", info.image)
-    const image = await post(API_URL + "/addDoctorImage", formData);
+    const image = await axios.post(API_URL + "/addDoctorImage", formData);
     await post(API_URL + "/addDoctorDetails", {
-      image: image.data, expertise: info.expertise, startShiftTime: info.startShiftTime,
+      image: image, expertise: info.expertise, startShiftTime: info.startShiftTime,
       endShiftTime: info.endShiftTime, qualification: info.qualification, about: info.about
     }, {
       headers: { authorization: token }

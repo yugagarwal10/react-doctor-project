@@ -4,15 +4,13 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { API_URL } from '../../service/config';
-import { decryptData } from '../../service/decrypt';
-import { get } from '../../service/axios';
+import { patch } from '../../service/axios';
 
 const Doctorprofileupdate = () => {
     const { handleSubmit, register, formState: { errors } } = useForm()
     const [doctor, setDoctor] = useState({
         fullName: "",
         expertise: [],
-        email: "",
         qualification: "",
         about: "",
         image:"",
@@ -24,7 +22,6 @@ const Doctorprofileupdate = () => {
         fullName: doctor.fullName,
         about: doctor.about,
         qualification: doctor.qualification,
-        email: doctor.email,
         endShiftTime:doctor.endShiftTime,
         startShiftTime:doctor.startShiftTime,
     })
@@ -34,8 +31,8 @@ const Doctorprofileupdate = () => {
             getData();
     }, []);
     const getData = async () => {
-        const result = await get(API_URL+"/doctorDetails", { headers: { authorization:token } });
-        setDoctor(result.data);
+        const result = await axios.get(API_URL+"/doctorDetails", { headers: { authorization:token } });
+        setDoctor(result);
     };
     const handleInputChange = (event) => {
         event.preventDefault();
@@ -47,17 +44,12 @@ const Doctorprofileupdate = () => {
     };
     const navigate = useNavigate();
     const handlesubmit = async (e) => {
-            const response = await axios.patch(API_URL+"/updateDoctorProfile", {
+            await patch(API_URL+"/updateDoctorProfile", {
                 fullName: info.fullName,
                 about: info.about,
-                email: info.email,
                 startShiftTime: info.startShiftTime,
                 endShiftTime: info.endShiftTime,
                 qualification: info.qualification
-            }, {
-                headers: {
-                    authorization: token
-                }
             })
             .then(()=>{
                 navigate("/doctor/profile")
@@ -79,14 +71,8 @@ const Doctorprofileupdate = () => {
                         <div className="relative">
                             <label className="block text-lg font-medium text-gray-700 mb-3" htmlFor="full_name">Full Name</label>
                             <input type="text"
-                                {...register("fullName", { required: "fullName is required", pattern: { value: /^[a-zA-Z ]+$/, message: "fullName is not valid" } })} name="fullName" id="full_name" onChange={handleInputChange} className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder={doctor.fullName}></input>
+                                {...register("fullName", { pattern: { value: /^[a-zA-Z ]+$/, message: "fullName is not valid" } })} name="fullName" id="full_name" onChange={handleInputChange} className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-300 hover:shadow-lg hover:scale-105"defaultValue={doctor.fullName}/>
                             {errors.fullName && <span className="text-red-500 text-sm">{errors.fullName.message}</span>}
-                        </div>
-                        <div className="relative">
-                            <label className="block text-lg font-medium text-gray-700 mb-3" htmlFor="email">Email</label>
-                            <input type="text"
-                                {...register("email", { required: "Email is required", pattern: { value: /^[a-zA-Z0-9.]+@[a-z]+.[a-z]+$/, message: "Email is not valid" } })} onChange={handleInputChange} name="email" id="email" className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-purple-500 focus:outline-none focus:border-purple-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder={doctor.email}></input>
-                            {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
                         </div>
                     </div>
 
@@ -94,13 +80,13 @@ const Doctorprofileupdate = () => {
                         <div className="relative">
                             <label className="block text-lg font-medium text-gray-700 mb-3" htmlFor="phone">Start Shift Time</label>
                             <input type="time"
-                                {...register("startShiftTime", { required: "startShiftTime is required"})} onChange={handleInputChange} name="startShiftTime" className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-green-500 focus:outline-none focus:border-green-500 transition-all duration-300 hover:shadow-lg" ></input>
+                             onChange={handleInputChange} name="startShiftTime" className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-green-500 focus:outline-none focus:border-green-500 transition-all duration-300 hover:shadow-lg"/>
                             {errors.startShiftTime && <span className="text-red-500 text-sm">{errors.startShiftTime.message}</span>}
                         </div>
 
                         <div className="relative">
                             <label className="block text-lg font-medium text-gray-700 mb-3" htmlFor="address">End Shift Time</label>
-                            <input type="time"{...register("endShiftTime", { required: "endShiftTime is required"})}
+                            <input type="time"{...register("endShiftTime")}
                                 onChange={handleInputChange} name="endShiftTime" 
                                 className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-yellow-500 focus:outline-none focus:border-yellow-500 transition-all duration-300 hover:shadow-lg hover:scale-105"></input>
                             {errors.endShiftTime && <span className="text-red-500 text-sm">{errors.endShiftTime.message}</span>}
@@ -110,13 +96,13 @@ const Doctorprofileupdate = () => {
                         <div className="relative">
                             <label className="block text-lg font-medium text-gray-700 mb-3" htmlFor="full_name">Qualification</label>
                             <input type="text"
-                                {...register("qualification", { required: "qualification is required", pattern: { value: /^[a-zA-Z ]+$/, message: "qualification is not valid" } })} name="qualification" id="full_name" onChange={handleInputChange} className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder={doctor.qualification}></input>
+                                {...register("qualification", { pattern: { value: /^[a-zA-Z ]+$/, message: "qualification is not valid" } })} name="qualification" id="full_name" onChange={handleInputChange} className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-blue-500 focus:outline-none focus:border-blue-500 transition-all duration-300 hover:shadow-lg hover:scale-105" defaultValue={doctor.qualification}/>
                             {errors.qualification && <span className="text-red-500 text-sm">{errors.qualification.message}</span>}
                         </div>
                         <div className="relative">
                             <label className="block text-lg font-medium text-gray-700 mb-3" htmlFor="email">About</label>
                             <input type="text"
-                                {...register("about", { required: "about is required",pattern: { value: /^[a-zA-Z ]+$/, message: "about is not valid" } })} onChange={handleInputChange} name="about" id="email" className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-purple-500 focus:outline-none focus:border-purple-500 transition-all duration-300 hover:shadow-lg hover:scale-105" placeholder={doctor.about} ></input>
+                                {...register("about", {pattern: { value: /^[a-zA-Z ]+$/, message: "about is not valid" } })} onChange={handleInputChange} name="about" id="email" className="w-full px-6 py-3 text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-4 focus:ring-purple-500 focus:outline-none focus:border-purple-500 transition-all duration-300 hover:shadow-lg hover:scale-105" defaultValue={doctor.about}/>
                             {errors.about && <span className="text-red-500 text-sm">{errors.about.message}</span>}
                         </div>
                     </div>

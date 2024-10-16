@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { resolvePath, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
 import "../assets/App.css"
@@ -32,25 +32,23 @@ const Login = () => {
       ...info,
       [name]: value
     }));
-  };
+  };  
   const navigate = useNavigate();
   const handlesubmit = async (e) => {
-    await post(API_URL + "/userLogin", {
-      email: info.email,
-      password: info.password
-    }).then((response) => {     
-      localStorage.setItem("token", `bearer ` + response.data.token)
-      localStorage.setItem("type", response.data.type);
-      if (response.data.type === "doctor") {
-        if (response.data.isverify === 1) {
+    await post(API_URL + "/userLogin", {email: info.email, password: info.password
+    }).then((response) => { 
+      localStorage.setItem("token", `bearer ` + response.token)
+      localStorage.setItem("type", response.type);
+      if (response.type === "doctor") {
+        if (response.isverify === 1) {
           navigate("/doctor/profile")
         }
         else {
           navigate("/doctor/verify")
         }
       }
-      if (response.data.type === "user") {
-        if (response.data.isverify === 1) {
+      if (response.type === "user") {
+        if (response.isverify === 1) {
           navigate("/user/main")
         }
         else {
@@ -58,8 +56,8 @@ const Login = () => {
         }
       }
     })
-      .catch((error) => {
-        toast.error((Object.values(error.response.data).toString()))
+      .catch((error) => {                
+        toast.error(error)
       })
   }
   return (

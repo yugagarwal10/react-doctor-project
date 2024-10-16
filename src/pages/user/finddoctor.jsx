@@ -12,7 +12,7 @@ const Finddoctor = () => {
   const getdata = async () => {
       await get(API_URL+"/doctorList")
       .then((result)=>{
-        setlist(result.data);
+        setlist(result);
       })
       .catch(()=>{
         toast.error('Failed to fetch doctor data');
@@ -21,7 +21,6 @@ const Finddoctor = () => {
   useEffect(() => {
       getdata()
 }, []);
-
   return (
     <div>
       <body className="bg-gray-100 font-serif">
@@ -42,7 +41,7 @@ const Finddoctor = () => {
                 <div  
                   className="bg-white rounded-lg overflow-hidden shadow-lg transition-all duration-300 ease-in-out transform card-hover"
                 >
-                  <img 
+                  <img onClick={()=>navigate("/user/chat")}
                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoaTnj2VuwfHPqvefk025J8uVhz1UfYtYWug&s"alt='doctor' 
                     className="w-full h-52 object-cover card-img transition-transform duration-300 mt-8"
                   />

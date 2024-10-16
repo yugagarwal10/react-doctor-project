@@ -1,8 +1,10 @@
-import { React, useState} from 'react'
+import { React, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import "../../assets/usermain.css"
 import { API_URL } from '../../service/config';
-import { Logout, Userdata } from '../../common/data';
+import { Getdata, Logout, Userdata } from '../../common/data';
+import { Socket } from '../../service/socket';
+import { toast } from 'react-toastify';
 
 const Usermain = () => {
   const [info, setinfo] = useState({
@@ -10,14 +12,20 @@ const Usermain = () => {
     email: "",
     contactNumber: "",
     image: "",
-  })
-  const navigate = useNavigate()
-  const token = localStorage.getItem("token");
-  Userdata(setinfo, token)
-  const logout=()=>{
-    Logout("/userLogout", token);
+  });
+  const navigate = useNavigate();
+  const logout = () => {
+    Logout("/userLogout");
     navigate("/Login")
   }
+  Getdata()
+  Userdata(setinfo);
+  useEffect(() => {
+    Socket.on("message", (message) => {   
+      toast.info(`Doctor has ${message}ed your appointment`);
+      return Socket.off("message",(message))
+    })
+  },[])
   return (
     <div>
       <div className="container">

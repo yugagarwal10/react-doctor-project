@@ -2,7 +2,8 @@ import { React, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../service/config';
 import { get } from '../../service/axios';
-import { Logout } from '../../common/data';
+import { Getdata, Logout } from '../../common/data';
+import axios from 'axios';
 
 const DoctorProfile = () => {
     const navigate = useNavigate();
@@ -16,15 +17,16 @@ const DoctorProfile = () => {
     });
     const token = localStorage.getItem("token");
     const getData = async () => {
-        const result = await get(API_URL + "/doctorDetails", { headers: { authorization: token } });
-        setInfo(result.data);
+        const result = await axios.get(API_URL + "/doctorDetails", { headers: { authorization: token } });
+        setInfo(result);
     };
+    Getdata();
     useEffect(() => {
         getData()
     }, []);
 
     const logout=()=>{
-        Logout("/doctorLogout", token)
+        Logout("/doctorLogout")
         navigate("/Login")
     }
     return (
@@ -74,6 +76,10 @@ const DoctorProfile = () => {
                 <button onClick={() => navigate("/doctor/profileupdate")}
                     className="bg-gradient-to-r from-green-500 to-lime-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-green-600 hover:to-lime-600 transition duration-300 transform hover:scale-105">
                     <i className="fas fa-list"></i> Update Profile
+                </button>
+                <button onClick={() => navigate("/doctor/chat")}
+                    className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-teal-600 hover:to-cyan-600 transition duration-300 transform hover:scale-105">
+                    <i className="fas fa-list"></i> Chat
                 </button>
             </div>
 

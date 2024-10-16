@@ -12,9 +12,11 @@ const moment = require("moment");
 const Appointment = require("./schema/appointment")
 const nodemailer = require("nodemailer");
 const ejs = require("ejs");
+const io = require("../index")
 const Path = path.resolve(__dirname, "utils/letter.ejs")
 const degree = require("./utils/degree");
-
+const Message = require("./schema/message");
+const Chat = require("./schema/chat");
 async function checkUserToken(token, req, res) {
     if (!token) {
         return commonfun.sendError(req, res, { message: "enter token" }, 401)
@@ -41,11 +43,26 @@ async function checkDoctorToken(token, req, res) {
     }
     return existingUser;
 }
+const DecryptData = async (req, res, next) => {
+    try {
+        const { mac, value } = req.body;
+
+        const data = await decryptData.decryptData(mac, value);
+
+        if (!data) {
+            return res.status(500).json({ message: "Decryption failed" });
+        }
+        req.body = data;
+        next();
+    } catch (error) {
+        return commonfun.sendError(req, res, { message: error.message }, 500);
+    }
+};
 const userRegister = async (req, res) => {
     try {
         const type = req.body.type;
         const password = req.body.password;
-        const hash = await bcrypt.hash(password,10);
+        const hash = await bcrypt.hash(password, 10);
         if (type == "user") {
             const newuser = new User({
                 fullName: req.body.fullName,
@@ -117,23 +134,10 @@ const userLogin = async (req, res) => {
         }
         return commonfun.sendError(req, res, { message: "enter proper email" }, 401)
     } catch (error) {
+        console.log(error);
         return commonfun.sendError(req, res, error, 500)
     }
 }
-const DecryptData = async (req, res) => {
-    try {
-        const { mac, value } = req.body;
-
-        const data = await decryptData.decryptData(mac, value);
-
-        if (!data) {
-            return res.status(500).json({ message: "Decryption failed" });
-        }
-        return res.json(data);
-    } catch (error) {
-        return commonfun.sendError(req, res, { message: error.message }, 500);
-    }
-};
 const addDoctorDetails = async (req, res) => {
     try {
         const token = req.headers.authorization;
@@ -157,8 +161,8 @@ const addImage = async (req, res) => {
         if (!file) {
             return commonfun.sendError(req, res, { message: "enter file" }, 422)
         }
-        const filename=file.filename;
-        const name=filename.slice(0,-4)
+        const filename = file.filename;
+        const name = filename.slice(0, -4)
         return res.json(name)
     } catch (error) {
         return commonfun.sendError(req, res, { message: error.message }, 500)
@@ -175,11 +179,12 @@ const doctorDetails = async (req, res) => {
 }
 const addUserDetails = async (req, res) => {
     try {
-        const token = req.headers.authorization;        
+        const token = req.headers.authorization;
         const info = await checkUserToken(token, req, res);
         await User.updateOne({ _id: new mongoose.Types.ObjectId(info._id) }, { $set: { contactNumber: req.body.contactNumber, address: req.body.address, image: req.body.image, isverify: 1, } });
         return commonfun.sendSuccess(req, res, { message: "added successfully" })
     } catch (error) {
+        console.log(error);
         return commonfun.sendError(req, res, error, 500)
     }
 }
@@ -197,7 +202,7 @@ const addAppointment = async (req, res) => {
     try {
         const token = req.headers.authorization;
         const existinguser = await checkUserToken(token, req, res);
-        const doctorName=req.body.doctor;
+        const doctorName = req.body.doctor;
         const findDoctor = await Doctor.findOne({ fullName: req.body.doctor });
         if (!findDoctor) {
             return commonfun.sendError(req, res, { message: "no doctor found" }, 400)
@@ -311,7 +316,7 @@ const fullAppointmentList = async (req, res) => {
             ])
             return res.json(list);
         }
-        const existingDoctor = await Doctor.findOne({ _id: new mongoose.Types.ObjectId(id)});
+        const existingDoctor = await Doctor.findOne({ _id: new mongoose.Types.ObjectId(id) });
         if (existingDoctor) {
             const list = await Appointment.aggregate([
                 {
@@ -341,7 +346,9 @@ const fullAppointmentList = async (req, res) => {
             ])
             return res.json(list);
         }
-    } catch (error) {   
+    } catch (error) {
+        console.log(error);
+
         return commonfun.sendError(req, res, { message: error.message }, 500)
     }
 }
@@ -365,15 +372,37 @@ const deleAppointment = async (req, res) => {
 const confirmAppointment = async (req, res) => {
     try {
         const token = req.headers.authorization;
-        await checkDoctorToken(token, req, res);
+        const doctor = await checkDoctorToken(token, req, res);
         const response = req.body.response;
         const appointmentId = req.body.appointmentId;
+        const findAppointment = await Appointment.findOne({ _id: new mongoose.Types.ObjectId(appointmentId) });
+        const date = Date.now();
+        const formatedDate = moment(date).format("DD-MM-YYYY");
+        const formatedTime = moment(date).format("hh:mm A");
         if (response == "Accept") {
             await Appointment.updateOne({ _id: new mongoose.Types.ObjectId(appointmentId) }, { $set: { status: 1 } })
+            const newmessage = new Message({
+                userId: findAppointment.userId,
+                doctorId: doctor._id,
+                message: response,
+                time: formatedTime,
+                date: formatedDate
+            })
+            io.io.emit("message",response)
+            await newmessage.save();
             return commonfun.sendSuccess(req, res, { message: "accepted successfully" })
         }
         if (response == "Reject") {
             await Appointment.updateOne({ _id: new mongoose.Types.ObjectId(appointmentId) }, { $set: { status: 2 } });
+            const newmessage = new Message({
+                userId: findAppointment.userId,
+                doctorId: doctor._id,
+                message: response,
+                time: formatedTime,
+                date: formatedDate
+            })
+            io.io.emit("message", response);
+            await newmessage.save();
             return commonfun.sendSuccess(req, res, { message: "rejected successfully" })
         }
         return commonfun.sendError(req, res, { message: "enter response as Accept or Reject" }, 422)
@@ -390,7 +419,24 @@ const updateUserProfile = async (req, res) => {
         if (!existingUser) {
             return commonfun.sendError(req, res, { message: "invalid token or user not found" }, 401)
         }
-        await User.updateOne({ _id: new mongoose.Types.ObjectId(id) }, { $set: { contactNumber: req.body.contactNumber, address: req.body.address, fullName: req.body.fullName, email: req.body.email } });
+        const data = {};
+
+        if (req.body.contactNumber) {
+            data.contactNumber = req.body.contactNumber;
+        }
+
+        if (req.body.address) {
+            data.address = req.body.address;
+        }
+
+        if (req.body.fullName) {
+            data.fullName = req.body.fullName;
+        }
+
+        if (req.body.email) {
+            data.email = req.body.email;
+        }
+        await User.updateOne({ _id: new mongoose.Types.ObjectId(id) }, { $set: data });
         return commonfun.sendSuccess(req, res, { message: "updated successfully" })
     } catch (error) {
         console.log(error);
@@ -399,7 +445,7 @@ const updateUserProfile = async (req, res) => {
 }
 const updateDoctorProfile = async (req, res) => {
     try {
-        const token = req.headers.authorization;    
+        const token = req.headers.authorization;
         const info = await checkDoctorToken(token, req, res)
         const id = info._id;
         const existingUser = await Doctor.findOne({ _id: new mongoose.Types.ObjectId(id) });
@@ -413,11 +459,30 @@ const updateDoctorProfile = async (req, res) => {
         if (startShiftTime > endShiftTime) {
             return commonfun.sendError(req, res, { message: "end time should be greater" }, 422);
         }
-        await Doctor.updateOne({ _id: new mongoose.Types.ObjectId(id) }, { $set: { about: req.body.about, qualification: req.body.qualification, fullName: req.body.fullName, email: req.body.email, startShiftTime: formatedStart, endShiftTime: formatedLast } });
+        const data = {};
+        if (req.body.startShiftTime) {
+            data.startShiftTime = formatedStart
+        }
+        if (req.body.endShiftTime) {
+            data.endShiftTime = formatedLast
+        }
+        if (req.body.about) {
+            data.about = req.body.about
+        }
+        if (req.body.qualification) {
+            data.qualification = req.body.qualification
+        }
+        if (req.body.fullName) {
+            data.fullName = req.body.fullName
+        }
+        if (req.body.email) {
+            data.email = req.body.email
+        }
+        await Doctor.updateOne({ _id: new mongoose.Types.ObjectId(id) }, { $set: data });
         return commonfun.sendSuccess(req, res, { message: "added successfully" })
     } catch (error) {
         console.log(error);
-        
+
         return commonfun.sendError(req, res, { message: error.message }, 500)
     }
 }
@@ -443,8 +508,44 @@ const doctorLogout = async (req, res) => {
         return commonfun.sendError(req, res, { message: error.message }, 500)
     }
 }
+const sendMessage = async (req, res) => {
+    try {
+        const token = req.headers.authorization;
+        const userinfo = await checkUserToken(token, req, res);
+        const id = userinfo._id;
+        const appointmentId = req.body.appointmentId;
+        const findAppontment = await Appointment.findOne({ _id: new mongoose.Types.ObjectId(appointmentId) });
+        const userId = findAppontment.userId;
+        const message = req.body.message;
+        const date = Date.now();
+        const formatedDate = moment(date).format("DD-MM-YYYY");
+        const formatedTime = moment(date).format("hh-mm A");
+        const newmessage = new Chat({
+            userId: userId,
+            time: formatedTime,
+            date: formatedDate,
+            message: message,
+            doctorId: id
+        });
+        await newmessage.save();
+        return commonfun.sendSuccess(req, res, { message: "message send successfully" })
+    } catch (error) {
+        return commonfun.sendError(req, res, { message: error.message }, 500)
+    }
+}
+const getMessage = async (req, res) => {
+    try {
+        const token = req.headers.authorization;
+        const userinfo = await checkUserToken(token, req, res);
+        const id = userinfo._id;
+        const messageList = await Message.find();
+        return res.json(messageList);
+    } catch (error) {
+        return commonfun.sendError(req, res, { message: error.message }, 500)
+    }
+}
 module.exports = {
-    userRegister, userLogin, DecryptData, addDoctorDetails, doctorDetails, addUserDetails, getUserDetails, addAppointment
+    userRegister, userLogin, addDoctorDetails, doctorDetails, addUserDetails, getUserDetails, addAppointment
     , doctorList, fullAppointmentList, deleAppointment, deleAppointment, confirmAppointment, updateUserProfile,
-    updateDoctorProfile, userLogout, addImage,doctorLogout
+    updateDoctorProfile, userLogout, addImage, doctorLogout, DecryptData, sendMessage, getMessage
 }

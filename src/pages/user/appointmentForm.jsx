@@ -19,15 +19,14 @@ const AppointmentForm = () => {
             ...info,
             [name]: value
         }))
-    }
+    }    
     const navigate = useNavigate();
-    const token = localStorage.getItem("token");
     const getdata = async () => {
-        const result = await get(API_URL + "/doctorList")
+        await get(API_URL + "/doctorList")
             .then((result) => {
-                setlist(result.data)
+                setlist(result)
             })
-            .catch((error) => {
+            .catch((error) => {             
                 toast.error(Object.values(error.response.data).toString());
             })
     }
@@ -41,7 +40,7 @@ const AppointmentForm = () => {
             reason: info.reason,
             doctor: info.doctor
         },
-            { headers: { authorization: token } })
+            )
             .then(() => {
                 navigate("/user/showappointent");
             })

@@ -16,6 +16,8 @@ import Appointmentpending from '../pages/doctor/appointmentpending'
 import Userprofileupdate from '../pages/user/userprofileupdate'
 import Doctorprofileupdate from '../pages/doctor/doctorprofileupdate'
 import ProtectedRoutes from '../components/protectedRoutes'
+import Chat from '../pages/user/chat'
+import Doctorchat from '../pages/doctor/doctorchat'
 
 const AppRoutes = () => {
     const routes = [
@@ -68,6 +70,12 @@ const AppRoutes = () => {
             allowedRoles: "doctor"
         },
         {
+            path: "/doctor/chat",
+            auth: true,
+            component: <Doctorchat />,
+            allowedRoles: "doctor"
+        },
+        {
             path: "/user/verify",
             auth: true,
             component: <Userverify />,
@@ -83,6 +91,12 @@ const AppRoutes = () => {
             path: "/user/medicalrecords",
             auth: true,
             component: <Medicalrecords />,
+            allowedRoles: "user"
+        },
+        {
+            path: "/user/chat",
+            auth: true,
+            component: <Chat/>,
             allowedRoles: "user"
         },
         {

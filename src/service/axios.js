@@ -1,7 +1,12 @@
 import axios from "axios";
+import Security from "../security/security";
+import { toast } from "react-toastify";
 
 function AxiosMiddleware(method, url, data, options) {
-    axios.defaults.headers.common['env'] = "test";
+  axios.defaults.headers.common["authorization"]=localStorage.getItem("token");
+    if (data) {
+        data = new Security().encrypt(data); 
+    }
 
     switch (method) {
         case 'get':
@@ -38,5 +43,14 @@ export function patch(url, data = [], options = {}) {
 export function Delete(url, data = [], options = {}) {
     return AxiosMiddleware('delete', url, data, options)
 }
+axios.interceptors.response.use((response) => {
+    if (response.data.mac !== undefined) {
+        response.data = new Security().decrypt(response);
+    }
+    return response.data
+},
+    (error) => {               
+        return Promise.reject(error);
+    })
 
 export default AxiosMiddleware;
