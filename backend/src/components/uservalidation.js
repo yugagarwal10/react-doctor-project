@@ -38,7 +38,7 @@ async function validateDoctorProfile(req, res, next) {
     expertise: ["required"],
     startShiftTime: ["required", "regex:/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/"],
     endShiftTime: ["required", "regex:/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/"],
-    image:["required","regex:/^[a-zA-Z0-9]+$/"]
+    image:["required","regex:/^[a-zA-Z0-9. ]+$/"]
   };
   await validator(req.body, rules, async (errors) => {
     if (errors) {
@@ -53,7 +53,7 @@ async function validateUserProfile(req, res, next) {
   let rules = {
     contactNumber: ["required", "regex:/^[0-9]{10}$/","unique_contactNumber"],
     address: ["required","regex:/^[a-zA-Z0-9- ]+$/"],
-    image:["required","regex:/^[a-zA-Z0-9]+$/"]
+    image:["required","regex:/^[a-zA-Z0-9. ]+$/"]
   };
   await validator(req.body, rules, async (errors) => {
     if (errors) {

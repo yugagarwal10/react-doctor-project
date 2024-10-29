@@ -1,10 +1,9 @@
 import { React, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 import { API_URL } from '../../service/config';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { categorizeAppointments } from '../../common/data';
 import { Getdata } from '../../common/data';
 import { post } from '../../service/axios';
@@ -19,10 +18,13 @@ const Appointmentpending = () => {
     const format = dayjs(value).format("DD-MM-YYYY")
     filteredDate((date) => ({ ...date, [name]: format }));
   };
-  const info = useSelector(state => state.value);
-  Getdata();
+  const info=useSelector(state=>state.appointment.list);
+  const dispatch = useDispatch();
+  useEffect(() => {
+      Getdata(dispatch);
+  }, [dispatch]);
   const postResult = async (appointmentId, response) => {
-    await post(API_URL + "/confirmAppointment", { appointmentId: appointmentId, response: response })
+    await post(API_URL + "/doctor/confirmAppointment", { appointmentId: appointmentId, response: response })
       .then(() => {
         toast.success('appointment updated successfully!');
       })

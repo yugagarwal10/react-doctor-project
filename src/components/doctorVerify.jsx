@@ -33,8 +33,8 @@ const Doctor = () => {
   const handlesubmit = async (event) => {
     const formData = new FormData();
     formData.append("image", info.image)
-    const image = await axios.post(API_URL + "/addDoctorImage", formData);
-    await post(API_URL + "/addDoctorDetails", {
+    const image = await post(API_URL + "/addDoctorImage", formData);
+    await post(API_URL + "/doctor/addDoctorDetails", {
       image: image, expertise: info.expertise, startShiftTime: info.startShiftTime,
       endShiftTime: info.endShiftTime, qualification: info.qualification, about: info.about
     }, {

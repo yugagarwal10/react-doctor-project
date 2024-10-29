@@ -7,7 +7,7 @@ export const counterSlice = createSlice({
   },
   reducers: {
     setAppointment:(state,action)=>{
-        state.value=action.payload
+        state.list=action.payload
     }
   },
 })

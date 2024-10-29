@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import "../../assets/usermain.css"
 import { API_URL } from '../../service/config';
 import { Getdata, Logout, Userdata } from '../../common/data';
-import { Socket } from '../../service/socket';
-import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../redux/userslice';
 
 const Usermain = () => {
+  const dispatch = useDispatch();
   const [info, setinfo] = useState({
     fullName: "",
     email: "",
@@ -15,24 +16,21 @@ const Usermain = () => {
   });
   const navigate = useNavigate();
   const logout = () => {
-    Logout("/userLogout");
+    Logout("/user/Logout");
     navigate("/Login")
   }
-  Getdata()
-  Userdata(setinfo);
-  useEffect(() => {
-    Socket.on("message", (message) => {   
-      toast.info(`Doctor has ${message}ed your appointment`);
-      return Socket.off("message",(message))
-    })
-  },[])
+dispatch(setUser(info))
+    useEffect(() => {
+        Getdata(dispatch);
+        Userdata(setinfo);
+    }, [dispatch]);
   return (
     <div>
       <div className="container">
         <h1 className="title">Welcome to Your Dashboard</h1>
-        <div className="user-info">
+        {info?(<div className="user-info">
           <div className="user-avatar">
-            <img src={API_URL + `/uploads/userProfile/${info.image}.png`} alt="User"></img>
+            <img src={API_URL + `/uploads/userProfile/${info?.image}`} alt="User"></img>
           </div>
           <div className="user-details">
             <h2>Name:{info.fullName.toUpperCase()}</h2>
@@ -42,7 +40,7 @@ const Usermain = () => {
           <button onClick={logout} className="logout-btn">
             <i className="fas fa-sign-out-alt"></i> Log Out
           </button>
-        </div>
+        </div>):(<p>loading details</p>)}
         <div className="btn-group">
           <button className="btn btn-appointment" onClick={() => navigate("/user/appointmentform")}>
             <i className="fas fa-calendar"></i> Book Appointment
@@ -51,13 +49,16 @@ const Usermain = () => {
             <i className="fas fa-list-alt"></i>Show Appointment
           </button>
           <button className="btn btn-appointment" onClick={() => navigate("/user/finddoctor")}>
-            <i className="fas fa-user-md"></i> Find A Doctor
+            <i className="fas fa-user-md"></i> Contact Us
           </button>
           <button className="btn btn-appointment" onClick={() => navigate("/user/medicalrecords")}>
             <i className="fas fa-file-medical-alt"></i> Medical Records
           </button>
           <button className="btn btn-appointment" onClick={() => navigate("/user/profileupdate")}>
             <i className="fas fa-file-medical-alt"></i> Update Profile
+          </button>
+          <button className="btn btn-appointment" onClick={() => navigate("/user/tickets")}>
+            <i className="fas fa-file-medical-alt"></i> Complain History
           </button>
         </div>
       </div>

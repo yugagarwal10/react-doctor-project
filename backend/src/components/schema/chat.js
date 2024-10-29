@@ -1,9 +1,5 @@
 const mongoose = require("mongoose");
 const chat = new mongoose.Schema({
-    userId: {
-        type: mongoose.Types.ObjectId,
-        require: true,
-    },
     message: {
         type: String,
         require: true
@@ -16,9 +12,32 @@ const chat = new mongoose.Schema({
         type: String,
         require: true,
     },
-    doctorId: {
+    senderId: {
         type: mongoose.Types.ObjectId,
-        require: true,
+        required: true
+    },
+    recieverId: {
+        type: mongoose.Types.ObjectId,
+        required: true
+    },
+    ticketId: {
+        type: mongoose.Types.ObjectId,
+        required: true
+    },
+    type: {
+        type: Number,
+        required: true,
+    },
+    status: {
+        type: Number,
+        default: 1
+    },
+    seen: {
+        type: Number,
+        default: 0
+    },
+    deletedId:{
+        type: mongoose.Types.ObjectId,
     }
 },
     { timestamps: true });

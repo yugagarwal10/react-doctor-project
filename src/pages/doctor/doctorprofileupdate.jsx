@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { API_URL } from '../../service/config';
-import { patch } from '../../service/axios';
+import { get, patch } from '../../service/axios';
 
 const Doctorprofileupdate = () => {
     const { handleSubmit, register, formState: { errors } } = useForm()
@@ -25,14 +25,15 @@ const Doctorprofileupdate = () => {
         endShiftTime:doctor.endShiftTime,
         startShiftTime:doctor.startShiftTime,
     })
-
-    const token = localStorage.getItem("token");
     useEffect(() => {
             getData();
     }, []);
     const getData = async () => {
-        const result = await axios.get(API_URL+"/doctorDetails", { headers: { authorization:token } });
-        setDoctor(result);
+        const result = await get(API_URL+"/doctor/doctorDetails").then((res)=>{
+            setDoctor(res);
+        }).catch((error)=>{
+            toast.error("cannot get doctor details")
+        })
     };
     const handleInputChange = (event) => {
         event.preventDefault();
@@ -44,7 +45,7 @@ const Doctorprofileupdate = () => {
     };
     const navigate = useNavigate();
     const handlesubmit = async (e) => {
-            await patch(API_URL+"/updateDoctorProfile", {
+            await patch(API_URL+"/doctor/updateDoctorProfile", {
                 fullName: info.fullName,
                 about: info.about,
                 startShiftTime: info.startShiftTime,

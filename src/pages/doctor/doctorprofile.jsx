@@ -3,32 +3,32 @@ import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../service/config';
 import { get } from '../../service/axios';
 import { Getdata, Logout } from '../../common/data';
-import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import { setUser } from '../../redux/userslice';
 
 const DoctorProfile = () => {
     const navigate = useNavigate();
-    const [info, setInfo] = useState({
-        fullName: "",
-        expertise: [],
-        email: "",
-        qualification: "",
-        about: "",
-        image: "",
-    });
-    const token = localStorage.getItem("token");
+    const [info, setInfo] = useState(null);
     const getData = async () => {
-        const result = await axios.get(API_URL + "/doctorDetails", { headers: { authorization: token } });
-        setInfo(result);
+        await get(API_URL + "/doctor/doctorDetails")
+            .then((res) => {
+                setInfo(res);
+            })
+            .catch((error) => toast.error("Cannot get doctor details"));
     };
-    Getdata();
+    const dispatch = useDispatch();
+    dispatch(setUser(info));
     useEffect(() => {
-        getData()
-    }, []);
+        Getdata(dispatch);
+        getData();
+    }, [dispatch]);
 
-    const logout=()=>{
-        Logout("/doctorLogout")
-        navigate("/Login")
-    }
+    const logout = () => {
+        Logout("/doctor/doctorLogout");
+        navigate("/Login");
+    };
+
     return (
         <div className="bg-gradient-to-br from-indigo-200 to-blue-100 min-h-screen p-8 font-serif">
             <nav className="bg-white shadow-lg rounded-lg p-4 mb-8">
@@ -42,23 +42,27 @@ const DoctorProfile = () => {
                 </div>
             </nav>
 
-            <div className="bg-white rounded-lg shadow-xl p-6 flex flex-col md:flex-row mb-8 transform transition-transform hover:scale-105 hover:shadow-2xl duration-300">
-                <div className="md:w-1/3 text-center">
-                    <img
-                        src="https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg"
-                        alt="Doctor"
-                        className="rounded-full w-40 h-40 mx-auto border-4 border-indigo-500 shadow-lg"
-                    />
+            {info ? (
+                <div className="bg-white rounded-lg shadow-xl p-6 flex flex-col md:flex-row mb-8 transform transition-transform hover:scale-105 hover:shadow-2xl duration-300">
+                    <div className="md:w-1/3 text-center">
+                        <img
+                            src="https://img.freepik.com/free-vector/doctor-character-background_1270-84.jpg"
+                            alt="Doctor"
+                            className="rounded-full w-40 h-40 mx-auto border-4 border-indigo-500 shadow-lg"
+                        />
+                    </div>
+                    <div className="md:w-2/3 md:pl-6">
+                        <h2 className="text-4xl font-semibold text-gray-800">{info.fullName?.toUpperCase()}</h2>
+                        <p className="mt-2 text-gray-600">
+                            <strong className="text-indigo-600">Specialty:</strong> {info.expertise?.length > 0 ? info.expertise.join(', ') : 'Not specified'}
+                        </p>
+                        <p className="mt-2 text-gray-600"><strong className="text-indigo-600">Qualification:</strong> {info.qualification}</p>
+                        <p className="mt-2 text-gray-600"><strong className="text-indigo-600">Contact:</strong> {info.email}</p>
+                    </div>
                 </div>
-                <div className="md:w-2/3 md:pl-6">
-                    <h2 className="text-4xl font-semibold text-gray-800">{info.fullName.toUpperCase()}</h2>
-                    <p className="mt-2 text-gray-600">
-                        <strong className="text-indigo-600">Specialty:</strong> {info.expertise?.length > 0 ? info.expertise.join(', ') : 'Not specified'}
-                    </p>
-                    <p className="mt-2 text-gray-600"><strong className="text-indigo-600">Qualification:</strong> {info.qualification}</p>
-                    <p className="mt-2 text-gray-600"><strong className="text-indigo-600">Contact:</strong> {info.email}</p>
-                </div>
-            </div>
+            ) : (
+                <p>Loading doctor details...</p>
+            )}
 
             <div className="flex justify-center space-x-4 mb-8">
                 <button onClick={() => navigate("/doctor/appointmentpending")}
@@ -77,15 +81,18 @@ const DoctorProfile = () => {
                     className="bg-gradient-to-r from-green-500 to-lime-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-green-600 hover:to-lime-600 transition duration-300 transform hover:scale-105">
                     <i className="fas fa-list"></i> Update Profile
                 </button>
-                <button onClick={() => navigate("/doctor/chat")}
-                    className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-teal-600 hover:to-cyan-600 transition duration-300 transform hover:scale-105">
-                    <i className="fas fa-list"></i> Chat
+            </div>
+
+            <div className="flex justify-center space-x-4 mb-8">
+                <button onClick={() => navigate("/doctor/ticket")}
+                    className="bg-gradient-to-r from-blue-500 to-teal-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-teal-600 hover:to-cyan-600 transition duration-300 transform hover:scale-105">
+                    <i className="fas fa-list"></i> Support Chat
                 </button>
             </div>
 
             <div className="bg-white rounded-lg shadow-xl p-6 transition duration-300 transform hover:scale-105 mb-8">
                 <h4 className="text-xl font-bold mb-2 text-indigo-600">Doctor's Experience</h4>
-                <p className="text-gray-600">{info.about || 'No information available.'}</p>
+                <p className="text-gray-600">{info?.about || 'No information available.'}</p>
             </div>
 
             <style jsx>{`

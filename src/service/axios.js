@@ -1,11 +1,11 @@
 import axios from "axios";
 import Security from "../security/security";
-import { toast } from "react-toastify";
 
 function AxiosMiddleware(method, url, data, options) {
-  axios.defaults.headers.common["authorization"]=localStorage.getItem("token");
-    if (data) {
-        data = new Security().encrypt(data); 
+    axios.defaults.headers.common["authorization"] = localStorage.getItem("token");
+    
+    if (!(data instanceof FormData)) {
+        data = new Security().encrypt(data);
     }
 
     switch (method) {
@@ -49,7 +49,7 @@ axios.interceptors.response.use((response) => {
     }
     return response.data
 },
-    (error) => {               
+    (error) => {
         return Promise.reject(error);
     })
 

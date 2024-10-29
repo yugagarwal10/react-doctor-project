@@ -22,7 +22,7 @@ const AppointmentForm = () => {
     }    
     const navigate = useNavigate();
     const getdata = async () => {
-        await get(API_URL + "/doctorList")
+        await get(API_URL + "/doctor/doctorList")
             .then((result) => {
                 setlist(result)
             })
@@ -35,7 +35,7 @@ const AppointmentForm = () => {
     }, []);
     const handlesubmit = async (e) => {
         e.preventDefault();
-        await post(API_URL + "/addAppointment", {
+        await post(API_URL + "/user/addAppointment", {
             date: info.date,
             reason: info.reason,
             doctor: info.doctor

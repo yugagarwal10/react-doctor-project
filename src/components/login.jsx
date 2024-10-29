@@ -7,6 +7,8 @@ import { API_URL } from '../service/config';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { post } from '../service/axios';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../redux/userslice';
 
 
 const Login = () => {
@@ -16,6 +18,7 @@ const Login = () => {
     password: ""
   });
   const [showPassword, setShowPassword] = useState(true);
+  const dispatch=useDispatch();
   const togglePasswordVisibility = () => {
     if (showPassword === false) {
       setShowPassword(true)
@@ -36,9 +39,10 @@ const Login = () => {
   const navigate = useNavigate();
   const handlesubmit = async (e) => {
     await post(API_URL + "/userLogin", {email: info.email, password: info.password
-    }).then((response) => { 
+    }).then((response) => {       
       localStorage.setItem("token", `bearer ` + response.token)
       localStorage.setItem("type", response.type);
+      localStorage.setItem("id", response.id);
       if (response.type === "doctor") {
         if (response.isverify === 1) {
           navigate("/doctor/profile")
@@ -56,8 +60,10 @@ const Login = () => {
         }
       }
     })
-      .catch((error) => {                
-        toast.error(error)
+      .catch((error) => {  
+        console.log(error);
+                       
+        toast.error(error.response.data.message)
       })
   }
   return (

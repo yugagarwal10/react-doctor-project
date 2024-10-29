@@ -29,8 +29,8 @@ const doctor = new mongoose.Schema({
     expertise: [{
         type: String,
     }],
-    qualification:{
-        type:String,
+    qualification: {
+        type: String,
     },
     startShiftTime: {
         type: String,
@@ -38,12 +38,15 @@ const doctor = new mongoose.Schema({
     endShiftTime: {
         type: String,
     },
-    about:{
-        type:String,
+    about: {
+        type: String,
     },
     isverify: {
         type: Number,
         default: 0,
+    },
+    role: {
+        type: String
     }
 },
     { timestamps: true });

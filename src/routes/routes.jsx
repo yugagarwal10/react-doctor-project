@@ -16,9 +16,12 @@ import Appointmentpending from '../pages/doctor/appointmentpending'
 import Userprofileupdate from '../pages/user/userprofileupdate'
 import Doctorprofileupdate from '../pages/doctor/doctorprofileupdate'
 import ProtectedRoutes from '../components/protectedRoutes'
-import Chat from '../pages/user/chat'
 import Doctorchat from '../pages/doctor/doctorchat'
-
+import Common from '../components/common'
+import Applyticket from '../pages/user/aaplyticket'
+import SupportTicket from '../pages/doctor/supportTicket'
+import UserTickets from '../pages/user/userTickets'
+import UserChats from '../pages/user/chat'
 const AppRoutes = () => {
     const routes = [
         {
@@ -35,6 +38,13 @@ const AppRoutes = () => {
             path: "/doctor/verify",
             auth: true,
             component: <Doctor />,
+            allowedRoles: "doctor"
+
+        },
+        {
+            path: "/doctor/ticket",
+            auth: true,
+            component: <SupportTicket />,
             allowedRoles: "doctor"
 
         },
@@ -84,52 +94,80 @@ const AppRoutes = () => {
             path: "/user/appointmentform",
             auth: true,
             component: <AppointmentForm />,
-            allowedRoles: "user"
+            allowedRoles: "user",
+            layout: "user"
 
         },
         {
             path: "/user/medicalrecords",
             auth: true,
             component: <Medicalrecords />,
-            allowedRoles: "user"
+            allowedRoles: "user",
+            layout: "user"
         },
         {
             path: "/user/chat",
             auth: true,
-            component: <Chat/>,
-            allowedRoles: "user"
+            component: <UserChats />,
+            allowedRoles: "user",
+            layout: "user"
+        },
+        {
+            path: "/user/tickets",
+            auth: true,
+            component: <UserTickets />,
+            allowedRoles: "user",
+            layout: "user"
         },
         {
             path: "/user/finddoctor",
             auth: true,
             component: <Finddoctor />,
-            allowedRoles: "user"
+            allowedRoles: "user",
+            layout: "user"
         }, {
             path: "/user/profileupdate",
             auth: true,
             component: <Userprofileupdate />,
-            allowedRoles: "user"
+            allowedRoles: "user",
+            layout: "user"
 
         },
         {
             path: "/user/showappointent",
             auth: true,
             component: <Showappointent />,
-            allowedRoles: "user"
+            allowedRoles: "user",
+            layout: "user"
         },
         {
             path: "/user/main",
             auth: true,
             component: <Usermain />,
-            allowedRoles: "user"
+            allowedRoles: "user",
+            layout: "user"
+        },
+        {
+            path: "/user/applyTicket",
+            auth: true,
+            component: <Applyticket />,
+            allowedRoles: "user",
+            layout: "user"
         },
     ]
     return (
         <Routes>
             {routes.map((index, route) => {
                 if (index.auth === true) {
+                    if (index.layout === "user") {
+                        return (
+                            <Route element={<ProtectedRoutes allowedRoles={index.allowedRoles} />}>
+                                <Route key={route} path={index.path} element={<Common>{index.component}</Common>} />
+                            </Route>
+                        )
+                    }
                     return (
-                        <Route element={<ProtectedRoutes allowedRoles={index.allowedRoles}/>}>
+                        <Route element={<ProtectedRoutes allowedRoles={index.allowedRoles} />}>
                             <Route key={route} path={index.path} element={index.component} />
                         </Route>
                     )

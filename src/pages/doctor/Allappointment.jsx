@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faClipboardList, faCheckCircle, faTimesCircle, faHourglassHalf } from '@fortawesome/free-solid-svg-icons';
 import { categorizeAppointments, Getdata } from '../../common/data';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Allappointment = () => {;
   const navigate = useNavigate();
-  Getdata();
-  const info=useSelector(state=>state.value);
+  const dispatch = useDispatch();
+    useEffect(() => {
+        Getdata(dispatch);
+    }, [dispatch]);
+    const info=useSelector(state=>state.appointment.list);
   return (
     <div className="bg-gradient-to-br from-blue-50 to-purple-100 min-h-screen p-6 font-serif">
       <nav className="bg-white shadow-lg rounded-lg p-4 mb-8">

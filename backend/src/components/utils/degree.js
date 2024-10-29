@@ -17,22 +17,16 @@ function createUploadMiddleware(destinationFolder) {
             cb(null, hash + path.extname(file.originalname));
         }
     });
-    const fileFilterConfig = (req, file, cb) => {
-        if (file.mimetype.startsWith("image/")) {
-            cb(null, true);
-        } else {
-            cb(new Error("Invalid file type. Only images are allowed."), false);
-        }
-    };
     return multer({
         storage: storageConfig,
         limits: {
             fileSize: 1000000000
         },
-        fileFilter: fileFilterConfig
     });
 }
 module.exports = {
     uploadDoctorDegree: createUploadMiddleware("uploads/degree"),
-    uploadUserImage: createUploadMiddleware("uploads/userProfile")
+    uploadUserImage: createUploadMiddleware("uploads/userProfile"),
+    uploadTicketImage: createUploadMiddleware("uploads/tickets"),
+    uploadChatImage: createUploadMiddleware("uploads/userchat")
 };

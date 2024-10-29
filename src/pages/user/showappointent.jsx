@@ -1,18 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import "../../assets/showappointment.css"
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify';
 import { API_URL } from '../../service/config';
 import { categorizeAppointments, Getdata } from '../../common/data';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Delete } from '../../service/axios';
 
 const Showappointent = () => {
     const navigate = useNavigate();
-    Getdata()
-    const info=useSelector(state=>state.value);
+    const dispatch = useDispatch();
+    useEffect(() => {
+        Getdata(dispatch);
+    }, [dispatch]);
+    const info=useSelector(state=>state.appointment.list);
     const HandleDelete = async (id) => {
-        await Delete(API_URL + `/deleAppointment?id=${id}`)
+        await Delete(API_URL + `/user/deleAppointment?id=${id}`)
             .then(() => {
                 navigate("/user/main")
             })

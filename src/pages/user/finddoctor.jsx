@@ -10,7 +10,7 @@ const Finddoctor = () => {
   const navigate = useNavigate();
 
   const getdata = async () => {
-      await get(API_URL+"/doctorList")
+      await get(API_URL+"/getTickets")
       .then((result)=>{
         setlist(result);
       })
@@ -34,19 +34,19 @@ const Finddoctor = () => {
         </button>
           </div>
 
-          <h1 className="text-4xl font-bold text-center mb-10">Our Doctors</h1>
+          <h1 className="text-4xl font-bold text-center mb-10">Our Support Tickets</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {list.length > 0 ? (
               list.map((user) => (
                 <div  
                   className="bg-white rounded-lg overflow-hidden shadow-lg transition-all duration-300 ease-in-out transform card-hover"
                 >
-                  <img onClick={()=>navigate("/user/chat")}
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoaTnj2VuwfHPqvefk025J8uVhz1UfYtYWug&s"alt='doctor' 
+                  <img onClick={()=>navigate("/user/applyTicket",{state:user._id})}
+                    src="https://cdn-icons-png.flaticon.com/512/10744/10744918.png"alt='doctor' 
                     className="w-full h-52 object-cover card-img transition-transform duration-300 mt-8"
                   />
                   <div className="p-2 py-6">
-                    <h2 className="text-2xl font-bold mb-2 break-words">{user.fullName}</h2>
+                    <h2 className="text-2xl font-bold mb-2 break-words">{user.type}</h2>
                     <div className="mt-4 mb-2">
                       <p><span className="font-semibold p-2 mb-2 break-words">Email:</span>{user.email}</p>
                     </div>

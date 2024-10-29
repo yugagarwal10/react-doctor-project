@@ -1,4 +1,4 @@
-import { React, useState } from 'react'
+import { React, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
@@ -21,7 +21,9 @@ const Userprofileupdate = () => {
         contactNumber: "",
         address: "",
     })
-    Userdata(setuserinfo, token)
+    useEffect(()=>{
+        Userdata(setuserinfo, token)
+    },[])
     const handleInputChange = (event) => {
         event.preventDefault();
         const { name, value } = event.target;
@@ -32,7 +34,7 @@ const Userprofileupdate = () => {
     };
     const navigate = useNavigate();
     const handlesubmit = async () => {
-        await patch(API_URL + "/updateUserProfile", {
+        await patch(API_URL + "/user/updateUserProfile", {
             fullName: info.fullName,
             contactNumber: info.contactNumber,
             email: info.email,

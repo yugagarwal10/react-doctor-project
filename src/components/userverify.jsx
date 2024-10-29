@@ -27,13 +27,13 @@ const Userverify = () => {
         [name]: value
       }));
     }
-  };
+  };  
   const navigate = useNavigate();
   const handlesubmit = async (e) => {
     const formData = new FormData();
-    formData.append("image", info.image);
-    const image=await axios.post(API_URL +"/addUserImage",formData);
-    await post(API_URL + "/addUserDetails", { image:image, address: info.address, contactNumber: info.contactNumber }, {
+    formData.append("image", info.image);  
+    const image=await post(API_URL +"/addUserImage",formData);
+    await post(API_URL + "/user/addUserDetails", { image:image, address: info.address, contactNumber: info.contactNumber }, {
       headers: {
         authorization: token
       }
