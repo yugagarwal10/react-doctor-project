@@ -41,7 +41,6 @@ const DoctorProfile = () => {
                     </div>
                 </div>
             </nav>
-
             {info ? (
                 <div className="bg-white rounded-lg shadow-xl p-6 flex flex-col md:flex-row mb-8 transform transition-transform hover:scale-105 hover:shadow-2xl duration-300">
                     <div className="md:w-1/3 text-center">

@@ -25,8 +25,14 @@ const UserChats = () => {
   const [emojiVisible, setEmojiVisible] = useState(false);
   const [showseen, setshowseen] = useState(false);
   const [loader, setloader] = useState(false);
+  const [multiplemessage, setmultiplemessage] = useState(true);
   const [selecetedchat, setselecetedchat] = useState("");
+  const [SelectedMessage, setSelectedMessage] = useState([]);
   const id = useSelector((state) => state.user.user._id)
+  
+  const setText=async(message)=>{
+    await window.navigator.clipboard.writeText(message);
+  }
   const getUser = async () => {
     try {
       const res = await get(API_URL + `/userTicketDetails?ticket=${location.state._id}`);
@@ -144,13 +150,24 @@ const UserChats = () => {
       })
   }
   const deleteChatForMe = async (id) => {
-    await Delete(API_URL + `/deleteMessageForMe?id=${id}`)
+    await Delete(API_URL + `/deletemessage?id=${id}`)
       .then(() => {
         getMessage();
         setselecetedchat("")
       }).catch((error) => {
         toast.error("cannot delete message")
       })
+  }
+  const handleMultipleDelete = async () => {
+    SelectedMessage.map(async (message) => {
+      await Delete(API_URL + `/deleteMessageForMe?id=${message}`)
+        .then(() => {
+          getMessage();
+          setmultiplemessage(true)
+        }).catch((error) => {
+          toast.error("cannot delete message")
+        })
+    })
   }
   const seenMessage = async () => {
     await patch(API_URL + `/seenMessage`).then(() => {
@@ -178,6 +195,9 @@ const UserChats = () => {
       }
     });
   }, []);
+  const OpenDeleteMenu = () => {
+    setmultiplemessage(false)
+  }
 
   return (
     <div className="flex h-screen w-screen font-serif">
@@ -196,13 +216,14 @@ const UserChats = () => {
         <TicketDetails ticket={ticket} OpenImage={OpenImage}></TicketDetails>
       </div>
       <div className="w-full md:w-2/3 bg-white flex flex-col p-6 relative shadow-lg">
+        {multiplemessage === false && <i class="fa-solid fa-xmark text-2xl" onClick={() => setmultiplemessage(true)}></i>}
         {ticket ? (<h2 className="text-2xl text-center font-bold text-gray-700 mb-6 px-6">{ticket.reason}</ h2>) : (null)}
         <div className="flex-1 overflow-auto space-y-4">
           {history.length > 0 ? (
             history.map((chat, index) => (
-              <ChatSections chat={chat} selectedchat={selecetedchat} OpenChatImage={OpenChatImage} deleteChat={deleteChat}
-                deleteChatForMe={deleteChatForMe} index={index} setselecetedchat={setselecetedchat}>
-
+              <ChatSections chat={chat} multiplemessage={multiplemessage} selectedchat={selecetedchat} OpenChatImage={OpenChatImage} deleteChat={deleteChat}
+                deleteChatForMe={deleteChatForMe} index={index} setselecetedchat={setselecetedchat} OpenDeleteMenu={OpenDeleteMenu}
+                setmultiplemessage={setmultiplemessage} setSelectedMessage={setSelectedMessage} selectedMessage={SelectedMessage} setText={setText}>
               </ChatSections>
             ))
           ) : (
@@ -227,7 +248,7 @@ const UserChats = () => {
           {showseen && <div className="text-right mr-8 text-base">Seen</div>}
           <div className="yug"></div>
         </div>
-        {location.state.status === 0 ? (<div className="mt-6 flex items-center">
+        {location.state.status === 0 && multiplemessage ? (<div className="mt-6 flex items-center">
           <i className={`fa-solid fa-plus text-2xl p-2 mr-2 text-gray-600  rounded-full cursor-pointer transition-transform duration-300 hover:bg-gray-200 hover:text-blue-500 hover:scale-110 ${message.message === "" ? "block" : "hidden"}`}
             onClick={() => document.querySelector(".fileUpload").click()}></i>
           <i className={`fa-solid fa-smile text-2xl p-2 mr-2 text-gray-600  rounded-full cursor-pointer transition-transform duration-300 hover:bg-gray-200 hover:text-blue-500 hover:scale-110 ${message.message === "" ? "block" : "hidden"}`}
@@ -253,6 +274,11 @@ const UserChats = () => {
           </button>}
         </div>) : (null)}
         <input type='file' onChange={handleInputChange} name="image" className='hidden fileUpload'></input>
+        {multiplemessage === false && <div className="mt-3 flex text-lg">
+          <div onClick = { handleMultipleDelete }>
+            <button className='fa-solid fa-trash text-lg mr-2'></button>Delete
+          </div>
+        </div>}
       </div>
       <style>{
         `button:disabled {

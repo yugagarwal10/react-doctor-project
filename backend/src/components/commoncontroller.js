@@ -225,13 +225,15 @@ const sendMessage = async (req, res) => {
     try {
         const token = req.headers.authorization;
         const usertoken = token.slice(7);
-        const user = jwt.verify(usertoken, secret);     
+        const user = jwt.verify(usertoken, secret);
         const id = user.id;
         const message = req.body.message;
         if (!message) {
             return commonfun.sendError(req, res, { message: "enter message" }, 422)
         }
         const findAdmin = await Doctor.findOne({ role: "super-admin" });
+        const adminId = findAdmin._id;
+        const Id = adminId.toString();
         const date = Date.now();
         const formatedDate = moment(date).format("DD-MM-YYYY");
         const formatedTime = moment(date).format("hh:mm A");
@@ -247,8 +249,11 @@ const sendMessage = async (req, res) => {
                 type: req.body.type,
             });
             await newmessage.save();
+            io.io.emit(`message ${Id}`,findAdmin.fullName)
         }
         if (user.type == "doctor") {
+            const userId=findTicket.userId;
+            const Id=userId.toString();
             const newmessage = new Chat({
                 time: formatedTime,
                 date: formatedDate,
@@ -259,6 +264,7 @@ const sendMessage = async (req, res) => {
                 type: req.body.type,
             });
             await newmessage.save();
+            io.io.emit(`message ${Id}`, user.fullName)
         }
         io.io.emit("response", message)
         return commonfun.sendSuccess(req, res, { message: "message send successfully" })
@@ -339,11 +345,10 @@ const deletemessage = async (req, res) => {
 }
 const deleteMessageForMe = async (req, res) => {
     try {
-        const token=req.headers.authorization
+        const token = req.headers.authorization
         const usertoken = token.slice(7);
-        const user=jwt.verify(usertoken,secret);
+        const user = jwt.verify(usertoken, secret);
         const messageId = req.query.id;
-        const alreadyDeleted = await Chat.findOne({ _id: new mongoose.Types.ObjectId(messageId) });
         await Chat.updateOne({ _id: new mongoose.Types.ObjectId(messageId) }, { $set: { deletedId: user.id } })
         io.io.emit("response", "sdcv")
         return commonfun.sendSuccess(req, res, { message: "deleted successfully" })
@@ -353,9 +358,9 @@ const deleteMessageForMe = async (req, res) => {
 }
 const seenMessage = async (req, res) => {
     try {
-        const token=req.headers.authorization
+        const token = req.headers.authorization
         const usertoken = token.slice(7);
-        const user=jwt.verify(usertoken,secret);
+        const user = jwt.verify(usertoken, secret);
         await Chat.updateMany({ recieverId: new mongoose.Types.ObjectId(user.id), seen: 0 }, { $set: { seen: 1 } })
         io.io.emit("response", "dcfv")
         return commonfun.sendSuccess(req, res, { message: "updated successfully" })

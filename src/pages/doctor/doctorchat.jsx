@@ -21,10 +21,12 @@ const Doctorchat = () => {
   const [imageurl, setimageurl] = useState("");
   const [showimage, setshowimage] = useState(false);
   const [image, showImage] = useState("");
+  const [SelectedMessage, setSelectedMessage] = useState([]);
+  const [multiplemessage, setmultiplemessage] = useState(true);
   const [showseen, setshowseen] = useState(false);
   const [selectedchat, setselecetedchat] = useState("");
   const [loader, setloader] = useState(false);
-  const id=useSelector((state)=>state.user.user._id)
+  const id = useSelector((state) => state.user.user._id)
   const getuser = async () => {
     await get(API_URL + `/userTicketDetails?ticket=${location.state._id}`).then((res) => {
       setTicket(res)
@@ -145,12 +147,23 @@ const Doctorchat = () => {
         toast.error("cannot delete message")
       })
   }
+  const handleMultipleDelete = async () => {
+    SelectedMessage.map(async (message) => {
+      await Delete(API_URL + `/deleteMessageForMe?id=${message}`)
+        .then(() => {
+          getmessage();
+          setmultiplemessage(true)
+        }).catch((error) => {
+          toast.error("cannot delete message")
+        })
+    })
+  }
   const seenMessage = async () => {
-      await patch(API_URL + `/seenMessage`)
-      .then(()=>{
+    await patch(API_URL + `/seenMessage`)
+      .then(() => {
       }).catch((error) => {
         toast.error("server error")
-      }) 
+      })
   }
   useEffect(() => {
     if (history.length > 0) {
@@ -172,6 +185,10 @@ const Doctorchat = () => {
       }
     })
   }, []);
+  const OpenDeleteMenu = () => {
+    setmultiplemessage(false)
+  }
+
   return (
     <div className="flex h-screen w-screen font-serif">
       <div className="w-full md:w-1/3 bg-gradient-to-b from-gray-100 to-gray-300 p-6 shadow-lg overflow-auto">
@@ -188,12 +205,14 @@ const Doctorchat = () => {
         <TicketDetails ticket={ticket} OpenImage={OpenImage}></TicketDetails>
       </div>
       <div className="w-full md:w-2/3 bg-white flex flex-col p-6 relative shadow-lg">
+        {multiplemessage === false && <i class="fa-solid fa-xmark text-2xl" onClick={() => setmultiplemessage(true)}></i>}
         {ticket ? (<h2 className="text-2xl text-center font-bold text-gray-700 mb-6 px-6">{ticket.reason}</h2>) : (null)}
         <div className="chat flex-1 overflow-auto space-y-4">
           {history.length > 0 ? (
             history.map((chat, index) => (
               <ChatSections OpenChatImage={OpenChatImage} chat={chat} deleteChat={deleteChat} deleteChatForMe={deleteChatForMe}
-              index={index} selectedchat={selectedchat}  setselecetedchat={setselecetedchat}>
+                index={index} selectedchat={selectedchat} setselecetedchat={setselecetedchat} setmultiplemessage={setmultiplemessage} OpenDeleteMenu={OpenDeleteMenu}
+                multiplemessage={multiplemessage} selectedMessage={SelectedMessage} setSelectedMessage={setSelectedMessage}>
               </ChatSections>
             ))
           ) : (
@@ -218,7 +237,7 @@ const Doctorchat = () => {
           <div className='yug'></div>
         </div>
         {
-          location.state.status === 0 ? (
+          location.state.status === 0 && multiplemessage ? (
             <div className="mt-6 flex items-center">
               <i className={`fa-solid fa-plus text-2xl p-2 mr-2 text-gray-600 rounded-full cursor-pointer transition-transform duration-300 hover:bg-gray-200 hover:text-blue-500 hover:scale-110 ${message.message === "" ? "block" : "hidden"}`}
                 onClick={() => document.querySelector(".fileUpload").click()}></i>
@@ -243,6 +262,11 @@ const Doctorchat = () => {
         }
 
         < input type='file' onChange={handleInputChange} name="image" className='hidden fileUpload' ></input>
+        {multiplemessage === false && <div className="mt-3 flex text-lg">
+          <div onClick = { handleMultipleDelete }>
+            <button className='fa-solid fa-trash text-lg mr-2'></button>Delete
+          </div>
+        </div>}
       </div>
       <style>{
         `button:disabled {

@@ -22,6 +22,7 @@ import Applyticket from '../pages/user/aaplyticket'
 import SupportTicket from '../pages/doctor/supportTicket'
 import UserTickets from '../pages/user/userTickets'
 import UserChats from '../pages/user/chat'
+import DoctorCommon from '../components/doctorcommon'
 const AppRoutes = () => {
     const routes = [
         {
@@ -168,7 +169,7 @@ const AppRoutes = () => {
                     }
                     return (
                         <Route element={<ProtectedRoutes allowedRoles={index.allowedRoles} />}>
-                            <Route key={route} path={index.path} element={index.component} />
+                        <Route key={route} path={index.path} element={<DoctorCommon>{index.component}</DoctorCommon>} />
                         </Route>
                     )
                 }
