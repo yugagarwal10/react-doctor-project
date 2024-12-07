@@ -17,6 +17,7 @@ const Path = path.resolve(__dirname, "utils/letter.ejs")
 const degree = require("./utils/degree");
 const Message = require("./schema/message");
 const Chat = require("./schema/chat");
+const Offline = require("./schema/offline")
 const Ticket = require("./schema/supportticket");
 const ApplyTicket = require("./schema/applyticket");
 const message = require("./schema/message");
@@ -234,6 +235,7 @@ const sendMessage = async (req, res) => {
         const findAdmin = await Doctor.findOne({ role: "super-admin" });
         const adminId = findAdmin._id;
         const Id = adminId.toString();
+        const userId = id.toString();
         const date = Date.now();
         const formatedDate = moment(date).format("DD-MM-YYYY");
         const formatedTime = moment(date).format("hh:mm A");
@@ -249,11 +251,13 @@ const sendMessage = async (req, res) => {
                 type: req.body.type,
             });
             await newmessage.save();
-            io.io.emit(`message ${Id}`,findAdmin.fullName)
+            io.io.emit(`message ${Id}`, findAdmin.fullName)
         }
         if (user.type == "doctor") {
-            const userId=findTicket.userId;
-            const Id=userId.toString();
+            const recieverId = findTicket.userId;
+            const reciever = recieverId.toString();
+            const userId = findTicket.userId;
+            const Id = userId.toString();
             const newmessage = new Chat({
                 time: formatedTime,
                 date: formatedDate,
@@ -279,11 +283,11 @@ const getMessage = async (req, res) => {
         const usertoken = token.slice(7);
         const user = jwt.verify(usertoken, secret)
         if (user.type == "user") {
-            const messageList = await Chat.find({ ticketId: req.query.ticketId, status: 1, $nor: [{ deletedId: new mongoose.Types.ObjectId(user.id) }] })
+            const messageList = await Chat.find({ ticketId: req.query.ticketId, $nor: [{ deletedId: new mongoose.Types.ObjectId(user.id) }, { status: 3 }] })
             return res.json(messageList);
         }
         if (user.type == "doctor") {
-            const messageList = await Chat.find({ ticketId: req.query.ticketId, status: 1, $nor: [{ deletedId: new mongoose.Types.ObjectId(user.id) }] })
+            const messageList = await Chat.find({ ticketId: req.query.ticketId, $nor: [{ deletedId: new mongoose.Types.ObjectId(user.id) }, { status: 3 }] })
             return res.json(messageList);
         }
     } catch (error) {
@@ -343,12 +347,17 @@ const deletemessage = async (req, res) => {
         return commonfun.sendError(req, res, { message: error.message }, 500);
     }
 }
+
 const deleteMessageForMe = async (req, res) => {
     try {
         const token = req.headers.authorization
         const usertoken = token.slice(7);
         const user = jwt.verify(usertoken, secret);
         const messageId = req.query.id;
+        const findMessage = await Chat.findOne({ _id: new mongoose.Types.ObjectId(messageId) });
+        if (findMessage.deletedId) {
+            await Chat.updateOne({ _id: new mongoose.Types.ObjectId(messageId) }, { $set: { status: 3 } })
+        }
         await Chat.updateOne({ _id: new mongoose.Types.ObjectId(messageId) }, { $set: { deletedId: user.id } })
         io.io.emit("response", "sdcv")
         return commonfun.sendSuccess(req, res, { message: "deleted successfully" })
@@ -356,6 +365,7 @@ const deleteMessageForMe = async (req, res) => {
         return commonfun.sendError(req, res, { message: error.message }, 500);
     }
 }
+
 const seenMessage = async (req, res) => {
     try {
         const token = req.headers.authorization

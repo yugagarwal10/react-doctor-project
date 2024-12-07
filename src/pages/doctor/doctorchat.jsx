@@ -8,6 +8,7 @@ import TicketDetails from '../../components/ticketDetails';
 import ChatSections from '../../components/chatSections';
 import { useSelector } from 'react-redux';
 import Showimage from '../../components/showimage';
+import Dropdown from '../../components/dropdown';
 
 const Doctorchat = () => {
   const [history, sethistory] = useState([]);
@@ -20,6 +21,7 @@ const Doctorchat = () => {
   });
   const [imageurl, setimageurl] = useState("");
   const [showimage, setshowimage] = useState(false);
+  const [selectAll, setselectAll] = useState(false);
   const [image, showImage] = useState("");
   const [SelectedMessage, setSelectedMessage] = useState([]);
   const [multiplemessage, setmultiplemessage] = useState(true);
@@ -77,6 +79,9 @@ const Doctorchat = () => {
     setimageurl(API_URL + `/uploads/tickets/${url}`);
     setshowimage(true);
   }
+  const setText = async (message) => {
+    await window.navigator.clipboard.writeText(message);
+  }
   const OpenChatImage = (url) => {
     setimageurl(API_URL + `/uploads/userchat/${url}`);
     setshowimage(true);
@@ -92,6 +97,11 @@ const Doctorchat = () => {
       setMessage((info) => ({ ...info, [name]: value }));
     }
   }
+  const SelectAll = () => {
+    const all = history.map((user) => user._id);
+    setSelectedMessage(all)
+    setselectAll(true);
+  }  
   const sendMessage = async () => {
     setloader(true)
     let setImage = ""
@@ -149,10 +159,22 @@ const Doctorchat = () => {
   }
   const handleMultipleDelete = async () => {
     SelectedMessage.map(async (message) => {
-      await Delete(API_URL + `/deleteMessageForMe?id=${message}`)
+      deleteChatForMe(message)
         .then(() => {
           getmessage();
           setmultiplemessage(true)
+          setSelectedMessage([]);
+          setselectAll(false);
+        }).catch((error) => {
+          toast.error("cannot delete message")
+        })
+    })
+  }
+  const clearHistory = async () => {
+    history.map(async (message) => {
+      deleteChatForMe(message._id)
+        .then(() => {
+          getmessage();
         }).catch((error) => {
           toast.error("cannot delete message")
         })
@@ -188,7 +210,6 @@ const Doctorchat = () => {
   const OpenDeleteMenu = () => {
     setmultiplemessage(false)
   }
-
   return (
     <div className="flex h-screen w-screen font-serif">
       <div className="w-full md:w-1/3 bg-gradient-to-b from-gray-100 to-gray-300 p-6 shadow-lg overflow-auto">
@@ -205,14 +226,21 @@ const Doctorchat = () => {
         <TicketDetails ticket={ticket} OpenImage={OpenImage}></TicketDetails>
       </div>
       <div className="w-full md:w-2/3 bg-white flex flex-col p-6 relative shadow-lg">
-        {multiplemessage === false && <i class="fa-solid fa-xmark text-2xl" onClick={() => setmultiplemessage(true)}></i>}
-        {ticket ? (<h2 className="text-2xl text-center font-bold text-gray-700 mb-6 px-6">{ticket.reason}</h2>) : (null)}
+        {multiplemessage === false && 
+        <div className='flex'>
+          <i class="fa-solid fa-xmark text-2xl" onClick={() =>{ setmultiplemessage(true) 
+          setselectAll(false)
+          setSelectedMessage([])
+        }}></i>
+        <h2 className='ml-4 pt-1.5'>Selected Message:{SelectedMessage?.length}</h2>
+        </div>}
+    <Dropdown selectChat={SelectAll} deleteMessage={clearHistory}></Dropdown>
         <div className="chat flex-1 overflow-auto space-y-4">
           {history.length > 0 ? (
             history.map((chat, index) => (
               <ChatSections OpenChatImage={OpenChatImage} chat={chat} deleteChat={deleteChat} deleteChatForMe={deleteChatForMe}
                 index={index} selectedchat={selectedchat} setselecetedchat={setselecetedchat} setmultiplemessage={setmultiplemessage} OpenDeleteMenu={OpenDeleteMenu}
-                multiplemessage={multiplemessage} selectedMessage={SelectedMessage} setSelectedMessage={setSelectedMessage}>
+                multiplemessage={multiplemessage} selectAll={selectAll} setText={setText}  selectedMessage={SelectedMessage} setSelectedMessage={setSelectedMessage}>
               </ChatSections>
             ))
           ) : (
@@ -244,6 +272,7 @@ const Doctorchat = () => {
               <input onChange={handleInputChange} name='message'
                 disabled={message.image}
                 type="text"
+                autoComplete='off'
                 onKeyDown={(e) => {
                   if (e.keyCode === 13 && (message.message || message.image)) {
                     sendMessage();
@@ -264,8 +293,11 @@ const Doctorchat = () => {
         < input type='file' onChange={handleInputChange} name="image" className='hidden fileUpload' ></input>
         {multiplemessage === false && <div className="mt-3 flex text-lg">
           <div onClick = { handleMultipleDelete }>
-            <button className='fa-solid fa-trash text-lg mr-2'></button>Delete
+          <button className={`fa-solid fa-trash text-lg mr-2 ${SelectedMessage.length > 0 ? null :"hidden" }`}></button>{SelectedMessage.length > 0 ? "Delete" : null }
           </div>
+          {selectAll ? null : <div onClick={SelectAll}>
+            <button className='fa-solid fa-square-check text-lg mr-2 ml-4'></button>SelectAll
+          </div>}
         </div>}
       </div>
       <style>{

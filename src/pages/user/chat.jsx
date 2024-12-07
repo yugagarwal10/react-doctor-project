@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Delete, get, patch, post } from '../../service/axios';
 import { toast } from 'react-toastify';
 import { API_URL } from '../../service/config';
@@ -9,11 +9,12 @@ import ChatSections from '../../components/chatSections';
 import { useSelector } from 'react-redux';
 import EmojiPicker from 'emoji-picker-react';
 import Showimage from '../../components/showimage';
+import Dropdown from '../../components/dropdown';
 
 const UserChats = () => {
-  const [history, setHistory] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
+  const [history, setHistory] = useState([]);
   const [ticket, setTicket] = useState(null);
   const [message, setMessage] = useState({
     message: "",
@@ -21,6 +22,7 @@ const UserChats = () => {
   });
   const [image, showImage] = useState("");
   const [imageurl, setimageurl] = useState("");
+  const [selectAll, setselectAll] = useState(false);
   const [showimage, setshowimage] = useState(false);
   const [emojiVisible, setEmojiVisible] = useState(false);
   const [showseen, setshowseen] = useState(false);
@@ -29,8 +31,8 @@ const UserChats = () => {
   const [selecetedchat, setselecetedchat] = useState("");
   const [SelectedMessage, setSelectedMessage] = useState([]);
   const id = useSelector((state) => state.user.user._id)
-  
-  const setText=async(message)=>{
+
+  const setText = async (message) => {
     await window.navigator.clipboard.writeText(message);
   }
   const getUser = async () => {
@@ -47,6 +49,11 @@ const UserChats = () => {
       checkSeen();
     }
   }, [history])
+  const SelectAll = () => {
+    const all = history.map((user) => user._id);
+    setSelectedMessage(all)
+    setselectAll(true);
+  }
   const checkSeen = () => {
     if (history.length !== 0) {
       const all = history.filter((user) => user.senderId === id);
@@ -150,7 +157,7 @@ const UserChats = () => {
       })
   }
   const deleteChatForMe = async (id) => {
-    await Delete(API_URL + `/deletemessage?id=${id}`)
+    await Delete(API_URL + `/deleteMessageForMe?id=${id}`)
       .then(() => {
         getMessage();
         setselecetedchat("")
@@ -160,10 +167,21 @@ const UserChats = () => {
   }
   const handleMultipleDelete = async () => {
     SelectedMessage.map(async (message) => {
-      await Delete(API_URL + `/deleteMessageForMe?id=${message}`)
+      deleteChatForMe(message)
+        .then(() => {
+          setSelectedMessage([]);
+          setmultiplemessage(true)
+          setselectAll(false)
+        }).catch((error) => {
+          toast.error("cannot delete message")
+        })
+    })
+  }
+  const clearHistory = async () => {
+    history.map(async (message) => {
+      deleteChatForMe(message._id)
         .then(() => {
           getMessage();
-          setmultiplemessage(true)
         }).catch((error) => {
           toast.error("cannot delete message")
         })
@@ -216,14 +234,22 @@ const UserChats = () => {
         <TicketDetails ticket={ticket} OpenImage={OpenImage}></TicketDetails>
       </div>
       <div className="w-full md:w-2/3 bg-white flex flex-col p-6 relative shadow-lg">
-        {multiplemessage === false && <i class="fa-solid fa-xmark text-2xl" onClick={() => setmultiplemessage(true)}></i>}
-        {ticket ? (<h2 className="text-2xl text-center font-bold text-gray-700 mb-6 px-6">{ticket.reason}</ h2>) : (null)}
+        {multiplemessage === false &&
+          <div className='flex'>
+            <i class="fa-solid fa-xmark text-2xl" onClick={(e) => {
+              setmultiplemessage(true)
+              setselectAll(false)
+              setSelectedMessage([]);
+            }}></i>
+            <h2 className='ml-4 pt-1.5'>Selected Message:{SelectedMessage?.length}</h2>
+          </div>}
+        <Dropdown selectChat={SelectAll} deleteMessage={clearHistory}></Dropdown>
         <div className="flex-1 overflow-auto space-y-4">
           {history.length > 0 ? (
             history.map((chat, index) => (
               <ChatSections chat={chat} multiplemessage={multiplemessage} selectedchat={selecetedchat} OpenChatImage={OpenChatImage} deleteChat={deleteChat}
                 deleteChatForMe={deleteChatForMe} index={index} setselecetedchat={setselecetedchat} OpenDeleteMenu={OpenDeleteMenu}
-                setmultiplemessage={setmultiplemessage} setSelectedMessage={setSelectedMessage} selectedMessage={SelectedMessage} setText={setText}>
+                setmultiplemessage={setmultiplemessage} selectAll={selectAll} setSelectedMessage={setSelectedMessage} selectedMessage={SelectedMessage} setText={setText}>
               </ChatSections>
             ))
           ) : (
@@ -262,6 +288,7 @@ const UserChats = () => {
                 sendMessage();
               }
             }}
+            autoComplete='off'
             name="message"
             type="text"
             className="flex-1 message-input border border-gray-300 p-3 rounded-lg focus:outline-none focus:border-blue-500"
@@ -275,9 +302,12 @@ const UserChats = () => {
         </div>) : (null)}
         <input type='file' onChange={handleInputChange} name="image" className='hidden fileUpload'></input>
         {multiplemessage === false && <div className="mt-3 flex text-lg">
-          <div onClick = { handleMultipleDelete }>
-            <button className='fa-solid fa-trash text-lg mr-2'></button>Delete
+          <div onClick={handleMultipleDelete}>
+            <button className={`fa-solid fa-trash text-lg mr-2 ${SelectedMessage.length > 0 ? null : "hidden"}`}></button>{SelectedMessage.length > 0 ? "Delete" : null}
           </div>
+          {selectAll ? null : <div onClick={SelectAll}>
+            <button className='fa-solid fa-square-check text-lg mr-2 ml-4'></button>SelectAll
+          </div>}
         </div>}
       </div>
       <style>{
